@@ -38,7 +38,7 @@ public class LineServiceTest {
 
     @BeforeEach
     void setUp() {
-        databaseCleanup.execute(getClass());
+        databaseCleanup.execute();
     }
 
     @DisplayName("구간을 추가 함수는, 특정 노선에 구간을 추가하면 해당 구간이 추가된 노선 정보가 반환된다.")

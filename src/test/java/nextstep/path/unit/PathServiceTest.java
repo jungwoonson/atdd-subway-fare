@@ -44,7 +44,7 @@ public class PathServiceTest {
 
     @BeforeEach
     void setUp() {
-        databaseCleanup.execute(getClass());
+        databaseCleanup.execute();
 
         Station 강남역 = stationRepository.save(UnitTestFixture.강남역);
         Station 양재역 = stationRepository.save(UnitTestFixture.양재역);

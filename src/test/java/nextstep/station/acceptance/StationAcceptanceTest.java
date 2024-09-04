@@ -33,7 +33,7 @@ public class StationAcceptanceTest {
 
     @BeforeEach
     public void setUp() {
-        databaseCleanup.execute(this.getClass());
+        databaseCleanup.execute();
     }
 
     /**

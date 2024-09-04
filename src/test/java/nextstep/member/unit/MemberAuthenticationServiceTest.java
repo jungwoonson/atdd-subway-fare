@@ -34,7 +34,7 @@ public class MemberAuthenticationServiceTest {
 
     @BeforeEach
     public void setUp() {
-        databaseCleanup.execute(this);
+        databaseCleanup.execute();
         memberService.save(new MemberRequest(사용자1.getEmail(), 사용자1.getPassword(), 사용자1.getAge()));
     }
 

@@ -24,7 +24,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     public void setUp() {
-        databaseCleanup.execute(this);
+        databaseCleanup.execute();
         createResponse = 회원_생성_요청(사용자1.getEmail(), 사용자1.getPassword(), 사용자1.getAge());
     }
 

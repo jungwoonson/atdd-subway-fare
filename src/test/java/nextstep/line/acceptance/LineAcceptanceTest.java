@@ -35,7 +35,7 @@ public class LineAcceptanceTest {
 
     @BeforeEach
     public void setUp() {
-        databaseCleanup.execute(this.getClass());
+        databaseCleanup.execute();
     }
 
     /**

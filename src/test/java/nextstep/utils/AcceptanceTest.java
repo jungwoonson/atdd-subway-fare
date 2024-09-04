@@ -16,7 +16,7 @@ public class AcceptanceTest {
 
     @BeforeEach
     public void setUp() {
-        databaseCleanup.execute(getClass());
+        databaseCleanup.execute();
         dataLoader.loadData();
     }
 }

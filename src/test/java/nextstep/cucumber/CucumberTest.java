@@ -29,6 +29,6 @@ public class CucumberTest {
 
     @Before
     public void initialization() {
-        databaseCleanup.execute(this);
+        databaseCleanup.execute();
     }
 }

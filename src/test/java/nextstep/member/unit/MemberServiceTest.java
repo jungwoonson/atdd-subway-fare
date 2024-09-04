@@ -36,7 +36,7 @@ public class MemberServiceTest {
 
     @BeforeEach
     public void setUp() {
-        databaseCleanup.execute(this);
+        databaseCleanup.execute();
         회원1 = new Member(사용자1.getId(), 사용자1.getEmail(), 사용자1.getPassword(), 사용자1.getAge());
         memberRepository.save(회원1);
     }

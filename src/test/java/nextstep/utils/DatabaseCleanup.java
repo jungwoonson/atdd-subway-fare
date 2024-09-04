@@ -1,7 +1,5 @@
 package nextstep.utils;
 
-import nextstep.line.acceptance.LineAcceptanceTest;
-import nextstep.path.acceptance.PathAcceptanceTest;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -30,27 +28,17 @@ public class DatabaseCleanup implements InitializingBean {
     }
 
     @Transactional
-    public void execute(Object testClass) {
+    public void execute() {
         entityManager.flush();
         entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
         for (String tableName : tableNames) {
-            truncateTables(testClass, tableName);
+            truncateTables(tableName);
         }
         entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
     }
 
-    private void truncateTables(Object testClass, String tableName) {
-        if (notTruncateAble(testClass, tableName)) {
-            return;
-        }
+    private void truncateTables(String tableName) {
         entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate();
         entityManager.createNativeQuery("ALTER TABLE " + tableName + " ALTER COLUMN ID RESTART WITH 1").executeUpdate();
-    }
-
-    private static boolean notTruncateAble(Object testClass, String tableName) {
-        if (testClass.equals(LineAcceptanceTest.class) && tableName.equals("Station")) {
-            return true;
-        }
-        return false;
     }
 }

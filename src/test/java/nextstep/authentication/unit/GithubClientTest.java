@@ -28,7 +28,7 @@ public class GithubClientTest {
 
     @BeforeEach
     void setUp() {
-        databaseCleanup.execute(this);
+        databaseCleanup.execute();
     }
 
     @DisplayName("토큰 요청 함수는, code를 입력 받으면 토큰을 반환한다.")

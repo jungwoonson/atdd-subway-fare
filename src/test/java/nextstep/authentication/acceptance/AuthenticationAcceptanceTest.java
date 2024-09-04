@@ -31,7 +31,7 @@ public class AuthenticationAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     public void setUp() {
-        databaseCleanup.execute(this);
+        databaseCleanup.execute();
         memberRepository.save(new Member(사용자1.getEmail(), 사용자1.getPassword(), 사용자1.getAge()));
     }
 
