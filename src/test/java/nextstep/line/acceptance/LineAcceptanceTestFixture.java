@@ -1,71 +1,55 @@
 package nextstep.line.acceptance;
 
 import io.restassured.RestAssured;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import org.springframework.http.MediaType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LineAcceptanceTestFixture {
+    
     public static final String 신분당선 = "신분당선";
     public static final String 분당선 = "분당선";
+    
     public static final String RED = "bg-red-600";
     public static final String GREEN = "bg-green-600";
+    
     public static final String 분당역 = "분당역";
     public static final String 홍대역 = "홍대역";
     public static final String 강남역 = "강남역";
     public static final String 성수역 = "성수역";
-    public static final Long 분당역_ID = createStation(분당역);
-    public static final Long 홍대역_ID = createStation(홍대역);
-    public static final Long 강남역_ID = createStation(강남역);
-    public static final Long 성수역_ID = createStation(성수역);
+    
     public static final Long 생성된적없는_역_ID = -1L;
+    
     public static final Integer DEFAULT_DISTANCE = 10;
-
-    public static final Map<String, Object> 신분당선_PARAM = Map.of(
-            "name", 신분당선,
-            "color", RED,
-            "upStationId", 분당역_ID,
-            "downStationId", 홍대역_ID,
-            "distance", DEFAULT_DISTANCE
-    );
-
-    public static final Map<String, Object> 분당선_PARAM = Map.of(
-            "name", 분당선,
-            "color", GREEN,
-            "upStationId", 분당역_ID,
-            "downStationId", 강남역_ID,
-            "distance", 4
-    );
+    public static final Integer 분당_강남_거리 = 4;
+    public static final Integer 분당_성수_거리 = 6;
 
     public static final Map<String, Object> MODIFY_PARAM = Map.of(
             "name", 분당선,
             "color", GREEN
     );
 
-    public static final Map<String, Object> 홍대역_강남역_구간_PARAM = Map.of(
-            "upStationId", 홍대역_ID,
-            "downStationId", 강남역_ID,
-            "distance", DEFAULT_DISTANCE
-    );
-
-    public static final Map<String, Object> 홍대역_서초역_구간_PARAM = Map.of(
-            "upStationId", 홍대역_ID,
-            "downStationId", 생성된적없는_역_ID,
-            "distance", DEFAULT_DISTANCE
-    );
-
-    public static final Map<String, Object> 분당역_성수역_구간_PARAM = Map.of(
-            "upStationId", 분당역_ID,
-            "downStationId", 성수역_ID,
-            "distance", 6
-    );
-
-    public static final Map<String, Object> 홍대역_분당역_구간_PARAM = Map.of(
-            "upStationId", 홍대역_ID,
-            "downStationId", 분당역_ID,
-            "distance", DEFAULT_DISTANCE
-    );
+    public static Map<String, Object> createSectionParam(Long upStationId, Long downStationId, int distance) {
+        return Map.of(
+                "upStationId", upStationId,
+                "downStationId", downStationId,
+                "distance", distance
+        );
+    }
+    
+    public static Map<String, Object> createLineParam(String name, Long upStationId, Long downStationId, int distance) {
+        return Map.of(
+                "name", name,
+                "color", RED,
+                "upStationId", upStationId,
+                "downStationId", downStationId,
+                "distance", distance
+        );
+    }
 
     public static Long createStation(String name) {
         Map<String, Object> params = new HashMap<>();
@@ -78,5 +62,80 @@ public class LineAcceptanceTestFixture {
                 .then().log().all()
                 .extract()
                 .jsonPath().getLong("id");
+    }
+
+    public static ExtractableResponse<Response> createLine(Map<String, Object> params) {
+        return RestAssured.given().log().all()
+                .body(params)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post("/lines")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> findLines() {
+        return RestAssured.given().log().all()
+                .when().get("/lines")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> lookUpLine(Long id) {
+        return RestAssured.given().log().all()
+                .when().get("/lines/" + id)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> modifyLine(Long id) {
+        return RestAssured.given().log().all()
+                .body(MODIFY_PARAM)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().put("/lines/" + id)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> deleteLine(Long id) {
+        return RestAssured.given().log().all()
+                .when().delete("/lines/" + id)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> addSection(Long id, Map<String, Object> params) {
+        return RestAssured.given().log().all()
+                .body(params)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post(String.format("/lines/%d/sections", id))
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> deleteSection(Long id, Long stationId) {
+        return RestAssured.given().log().all()
+                .when().delete(String.format("/lines/%s/sections?stationId=%s", id, stationId))
+                .then().log().all()
+                .extract();
+    }
+
+    public static List<Long> getStationIds(Long lindId) {
+        return lookUpLine(lindId).jsonPath()
+                .getList("stations.id", Long.class);
+    }
+
+    public static List<String> getNames(ExtractableResponse<Response> response) {
+        return response.jsonPath()
+                .getList("name", String.class);
+    }
+
+    public static String getName(ExtractableResponse<Response> response) {
+        return response.jsonPath()
+                .getString("name");
+    }
+
+    public static long getId(ExtractableResponse<Response> createdLineResponse) {
+        return createdLineResponse.jsonPath()
+                .getLong("id");
     }
 }

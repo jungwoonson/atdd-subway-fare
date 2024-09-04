@@ -1,6 +1,5 @@
 package nextstep.line.acceptance;
 
-import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import nextstep.utils.DatabaseCleanup;
@@ -11,7 +10,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -30,12 +28,26 @@ public class LineAcceptanceTest {
     private static final int SECTION_PARAMS_INDEX = 1;
     private static final int EXPECTED_STATION_IDS_INDEX = 2;
 
+    public Long 분당역_ID;
+    public Long 홍대역_ID;
+    public Long 강남역_ID;
+    public Long 성수역_ID;
+
+    private Map<String, Object> 신분당선_PARAM;
+    private Map<String, Object> 분당선_PARAM;
+
     @Autowired
     private DatabaseCleanup databaseCleanup;
 
     @BeforeEach
     public void setUp() {
         databaseCleanup.execute();
+        분당역_ID = createStation(분당역);
+        홍대역_ID = createStation(홍대역);
+        강남역_ID = createStation(강남역);
+        성수역_ID = createStation(성수역);
+        신분당선_PARAM = createLineParam(신분당선, 분당역_ID, 홍대역_ID, DEFAULT_DISTANCE);
+        분당선_PARAM = createLineParam(분당선, 분당역_ID, 강남역_ID, 분당_강남_거리);
     }
 
     /**
@@ -105,7 +117,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        ExtractableResponse<Response> response = modifyLine(getId(createdLineResponse), MODIFY_PARAM);
+        ExtractableResponse<Response> response = modifyLine(getId(createdLineResponse));
 
         // then
         assertResponseCode(response, HttpStatus.OK);
@@ -161,9 +173,9 @@ public class LineAcceptanceTest {
 
     private List<Arguments> addSectionFixtures() {
         return List.of(
-            Arguments.of(신분당선_PARAM, 홍대역_강남역_구간_PARAM, List.of(분당역_ID, 홍대역_ID, 강남역_ID)),
-            Arguments.of(분당선_PARAM, 홍대역_분당역_구간_PARAM, List.of(홍대역_ID, 분당역_ID, 강남역_ID)),
-            Arguments.of(신분당선_PARAM, 분당역_성수역_구간_PARAM, List.of(분당역_ID, 성수역_ID, 홍대역_ID))
+            Arguments.of(신분당선_PARAM, createSectionParam(홍대역_ID, 강남역_ID, DEFAULT_DISTANCE), List.of(분당역_ID, 홍대역_ID, 강남역_ID)),
+            Arguments.of(분당선_PARAM, createSectionParam(홍대역_ID, 분당역_ID, DEFAULT_DISTANCE), List.of(홍대역_ID, 분당역_ID, 강남역_ID)),
+            Arguments.of(신분당선_PARAM, createSectionParam(분당역_ID, 성수역_ID, 분당_성수_거리), List.of(분당역_ID, 성수역_ID, 홍대역_ID))
         );
     }
 
@@ -175,7 +187,7 @@ public class LineAcceptanceTest {
     @Test
     void notExistLineExceptionTest() {
         // when
-        ExtractableResponse<Response> response = addSection(1L, 홍대역_강남역_구간_PARAM);
+        ExtractableResponse<Response> response = addSection(1L, createSectionParam(홍대역_ID, 강남역_ID, DEFAULT_DISTANCE));
 
         // then
         assertResponseCode(response, HttpStatus.NOT_FOUND);
@@ -193,7 +205,7 @@ public class LineAcceptanceTest {
         var createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        var response = addSection(getId(createdLineResponse), 홍대역_서초역_구간_PARAM);
+        var response = addSection(getId(createdLineResponse), createSectionParam(홍대역_ID, 생성된적없는_역_ID, DEFAULT_DISTANCE));
 
         // then
         assertResponseCode(response, HttpStatus.NOT_FOUND);
@@ -212,7 +224,7 @@ public class LineAcceptanceTest {
         for (Arguments fixture : fixtures) {
             // given
             var createdLineResponse = createLine(신분당선_PARAM);
-            addSection(getId(createdLineResponse), 홍대역_강남역_구간_PARAM);
+            addSection(getId(createdLineResponse), createSectionParam(홍대역_ID, 강남역_ID, DEFAULT_DISTANCE));
             Long stationId = (Long) fixture.get()[0];
             List<Long> expectedStationIds = (List<Long>) fixture.get()[1];
 
@@ -226,7 +238,7 @@ public class LineAcceptanceTest {
         }
     }
 
-    private static List<Arguments> deleteSectionFixtures() {
+    private List<Arguments> deleteSectionFixtures() {
         return List.of(
                 Arguments.of(분당역_ID, List.of(홍대역_ID, 강남역_ID)),
                 Arguments.of(홍대역_ID, List.of(분당역_ID, 강남역_ID)),
@@ -250,80 +262,5 @@ public class LineAcceptanceTest {
 
         // then
         assertResponseCode(response, HttpStatus.BAD_REQUEST);
-    }
-
-    private ExtractableResponse<Response> createLine(Map<String, Object> params) {
-        return RestAssured.given().log().all()
-                .body(params)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().post("/lines")
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> findLines() {
-        return RestAssured.given().log().all()
-                .when().get("/lines")
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> lookUpLine(Long id) {
-        return RestAssured.given().log().all()
-                .when().get("/lines/" + id)
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> modifyLine(Long id, Map<String, Object> params) {
-        return RestAssured.given().log().all()
-                .body(params)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().put("/lines/" + id)
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> deleteLine(Long id) {
-        return RestAssured.given().log().all()
-                .when().delete("/lines/" + id)
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> addSection(Long id, Map<String, Object> params) {
-        return RestAssured.given().log().all()
-                .body(params)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().post(String.format("/lines/%d/sections", id))
-                .then().log().all()
-                .extract();
-    }
-
-    private ExtractableResponse<Response> deleteSection(Long id, Long stationId) {
-        return RestAssured.given().log().all()
-                .when().delete(String.format("/lines/%s/sections?stationId=%s", id, stationId))
-                .then().log().all()
-                .extract();
-    }
-
-    private List<Long> getStationIds(Long lindId) {
-        return lookUpLine(lindId).jsonPath()
-                .getList("stations.id", Long.class);
-    }
-
-    private List<String> getNames(ExtractableResponse<Response> response) {
-        return response.jsonPath()
-                .getList("name", String.class);
-    }
-
-    private static String getName(ExtractableResponse<Response> response) {
-        return response.jsonPath()
-                .getString("name");
-    }
-
-    private static long getId(ExtractableResponse<Response> createdLineResponse) {
-        return createdLineResponse.jsonPath()
-                .getLong("id");
     }
 }
