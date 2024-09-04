@@ -40,16 +40,15 @@ public class DatabaseCleanup implements InitializingBean {
     }
 
     private void truncateTables(Object testClass, String tableName) {
-        if (notTruncateAble(testClass, tableName)) return;
+        if (notTruncateAble(testClass, tableName)) {
+            return;
+        }
         entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate();
         entityManager.createNativeQuery("ALTER TABLE " + tableName + " ALTER COLUMN ID RESTART WITH 1").executeUpdate();
     }
 
     private static boolean notTruncateAble(Object testClass, String tableName) {
         if (testClass.equals(LineAcceptanceTest.class) && tableName.equals("Station")) {
-            return true;
-        }
-        if (testClass.equals(PathAcceptanceTest.class) && tableName.equals("Station")) {
             return true;
         }
         return false;
