@@ -34,6 +34,7 @@ public class FavoriteAcceptanceTestFixture extends AcceptanceTest {
                 .upStation(upStation)
                 .downStation(downStation)
                 .distance(10)
+                .duration(10)
                 .build();
     }
 
@@ -45,6 +46,7 @@ public class FavoriteAcceptanceTestFixture extends AcceptanceTest {
                 .upStation(upStation)
                 .downStation(downStation)
                 .distance(9)
+                .duration(10)
                 .build();
     }
 

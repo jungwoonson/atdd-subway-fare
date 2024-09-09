@@ -43,15 +43,6 @@ public class UnitTestFixture {
         return createLine("경의선", RED, upStation, downStation, DISTANCE_7, DEFAULT_DURATION);
     }
 
-    public static Section createSection(Line line, Station upStation, Station downStation, int distance) {
-        return Section.builder()
-                .line(line)
-                .upStation(upStation)
-                .downStation(downStation)
-                .distance(distance)
-                .build();
-    }
-
     public static Line createLine(String name, String color, Station upStation, Station downStation, int distance, int duration) {
         return Line.builder()
                 .name(name)
@@ -60,6 +51,16 @@ public class UnitTestFixture {
                 .downStation(downStation)
                 .distance(distance)
                 .duration(duration)
+                .build();
+    }
+
+    public static Section createSection(Line line, Station upStation, Station downStation, int distance) {
+        return Section.builder()
+                .line(line)
+                .upStation(upStation)
+                .downStation(downStation)
+                .distance(distance)
+                .duration(DEFAULT_DURATION)
                 .build();
     }
 
@@ -74,7 +75,7 @@ public class UnitTestFixture {
     }
 
     public static SectionRequest createSectionRequest(Long upStationId, Long downStationId) {
-        return new SectionRequest(upStationId, downStationId, DEFAULT_DISTANCE);
+        return new SectionRequest(upStationId, downStationId, DEFAULT_DISTANCE, DEFAULT_DURATION);
     }
 
     public static List<StationResponse> createStationResponse(Station ...station) {

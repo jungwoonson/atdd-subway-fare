@@ -39,7 +39,8 @@ public class LineAcceptanceTestFixture {
         return Map.of(
                 "upStationId", upStationId,
                 "downStationId", downStationId,
-                "distance", distance
+                "distance", distance,
+                "duration", DEFAULT_DURATION
         );
     }
     

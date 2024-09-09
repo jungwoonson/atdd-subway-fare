@@ -53,6 +53,7 @@ public class Section {
         Section dividedSection = createDividedSection(section);
         downStation = section.downStation;
         distance = section.getDistance();
+        duration = section.getDuration();
         return dividedSection;
     }
 
@@ -70,6 +71,7 @@ public class Section {
                 .upStation(section.downStation)
                 .downStation(downStation)
                 .distance(distance - section.distance)
+                .duration(duration)
                 .build();
     }
 
@@ -123,6 +125,10 @@ public class Section {
 
     public Integer getDistance() {
         return distance;
+    }
+
+    public Integer getDuration() {
+        return duration;
     }
 
     public boolean isFirst() {

@@ -53,12 +53,13 @@ public class Line {
         this.color = color;
     }
 
-    public void addSection(Station upStation, Station downStation, Integer distance) {
+    public void addSection(Station upStation, Station downStation, Integer distance, Integer duration) {
         sections.add(Section.builder()
                 .line(this)
                 .upStation(upStation)
                 .downStation(downStation)
                 .distance(distance)
+                .duration(duration)
                 .build());
     }
     public void deleteSection(Station station) {

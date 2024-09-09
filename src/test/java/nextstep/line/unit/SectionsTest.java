@@ -37,7 +37,7 @@ public class SectionsTest {
         return Stream.of(
                 Arguments.of(양재역_교대역(), 강남역_양재역(), Sections.of(강남역_양재역(), 양재역_교대역())),
                 Arguments.of(강남역_양재역(), 강남역_홍대역(), Sections.of(강남역_홍대역(), 홍대역_양재역())),
-                Arguments.of(양재역_교대역(), 강남역_양재역(), Sections.of(강남역_양재역(), 양재역_교대역()))
+                Arguments.of(강남역_양재역(), 양재역_교대역(), Sections.of(강남역_양재역(), 양재역_교대역()))
         );
     }
 

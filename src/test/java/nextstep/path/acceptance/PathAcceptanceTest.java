@@ -83,9 +83,9 @@ public class PathAcceptanceTest implements En {
                 "color", DEFAULT_COLOR,
                 "upStationId", upStationId,
                 "downStationId", downStationId,
-                "distance", distance
+                "distance", distance,
+                "duration", 10
         );
-
     }
 
     private ExtractableResponse<Response> findShortestPaths(Long source, Long target) {

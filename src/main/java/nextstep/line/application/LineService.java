@@ -64,7 +64,7 @@ public class LineService {
         Station upStation = lookUpStationBy(sectionRequest.getUpStationId());
         Station downStation = lookUpStationBy(sectionRequest.getDownStationId());
         Line line = lookUpLineBy(id);
-        line.addSection(upStation, downStation, sectionRequest.getDistance());
+        line.addSection(upStation, downStation, sectionRequest.getDistance(), sectionRequest.getDuration());
         return createLineResponse(lineRepository.save(line));
     }
 
@@ -88,6 +88,7 @@ public class LineService {
                 .upStation(lookUpStationBy(lineRequest.getUpStationId()))
                 .downStation(lookUpStationBy(lineRequest.getDownStationId()))
                 .distance(lineRequest.getDistance())
+                .duration(lineRequest.getDuration())
                 .build();
     }
 

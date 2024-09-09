@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static nextstep.utils.UnitTestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Mock을 활용한 지하철 노선 서비스 테스트")
@@ -35,8 +36,8 @@ public class LineServiceMockTest {
         when(stationRepository.findById(양재역.getId())).thenReturn(Optional.of(양재역));
         when(stationRepository.findById(교대역.getId())).thenReturn(Optional.of(교대역));
         Line 신분당선 = 신분당선(강남역, 양재역);
-        when(lineRepository.findById(신분당선.getId())).thenReturn(Optional.of(신분당선));
-        when(lineRepository.save(신분당선)).thenReturn(신분당선);
+        when(lineRepository.findById(any())).thenReturn(Optional.of(신분당선));
+        when(lineRepository.save(any())).thenReturn(신분당선);
 
         // when
         LineResponse lineResponse = lineService.addSections(1L, createSectionRequest(양재역.getId(), 교대역.getId()));

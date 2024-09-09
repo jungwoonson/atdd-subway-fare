@@ -7,6 +7,7 @@ public class LineRequest {
     private Long upStationId;
     private Long downStationId;
     private Integer distance;
+    private Integer duration;
 
     public String getName() {
         return name;
@@ -46,5 +47,13 @@ public class LineRequest {
 
     public void setDistance(Integer distance) {
         this.distance = distance;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 }
