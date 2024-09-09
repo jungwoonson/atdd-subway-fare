@@ -14,6 +14,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class SectionTest {
 
     @Test
+    @DisplayName("구간 빌더는, 구간 정보를 입력하면 구간이 생성된다.")
+    void createSectionTest() {
+        // given
+        Section expected = new Section(신분당선, 강남역, 양재역, DEFAULT_DISTANCE, DEFAULT_DURATION);
+
+        // when
+        Section actual = createSection(신분당선, 강남역, 양재역, DEFAULT_DISTANCE, DEFAULT_DURATION);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
     @DisplayName("구간 분리 함수는, 현재 구간의 상행역과 주어진 구간의 하행역이 연결된다.")
     void dividedSectionTest() {
         // given

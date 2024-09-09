@@ -32,6 +32,19 @@ public class Line {
                 .upStation(builder.upStation)
                 .downStation(builder.downStation)
                 .distance(builder.distance)
+                .duration(builder.duration)
+                .build());
+    }
+
+    public Line(String name, String color, Station upStation, Station downStation, Integer distance, Integer duration) {
+        this.name = name;
+        this.color = color;
+        this.sections = Sections.from(Section.builder()
+                .line(this)
+                .upStation(upStation)
+                .downStation(downStation)
+                .distance(distance)
+                .duration(duration)
                 .build());
     }
 
@@ -83,6 +96,7 @@ public class Line {
         private Station upStation;
         private Station downStation;
         private Integer distance;
+        private Integer duration;
 
         public Builder id(Long id) {
             this.id = id;
@@ -111,6 +125,11 @@ public class Line {
 
         public Builder distance(Integer distance) {
             this.distance = distance;
+            return this;
+        }
+
+        public Builder duration(Integer duration) {
+            this.duration = duration;
             return this;
         }
 

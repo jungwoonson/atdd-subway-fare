@@ -24,6 +24,20 @@ class LineTest {
         양재역_교대역 = createSection(신분당선, 양재역, 교대역, DEFAULT_DISTANCE);
     }
 
+    @DisplayName("노선 빌더는, 노선의 필수정포를 입력하면 노선이 생성된다.")
+    @Test
+    void createLineTest() {
+        // given
+        String 새로운역 = "새로운역";
+        Line expected = new Line(새로운역, RED, 강남역, 양재역, DEFAULT_DISTANCE, DEFAULT_DURATION);
+
+        // when
+        Line actual = createLine(새로운역, RED, 강남역, 양재역, DEFAULT_DISTANCE, DEFAULT_DURATION);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
+    }
+
     @DisplayName("구간 추가 함수는, 노선의 구간을 추가하고 해당 노선의 목록을 조회하면 해당 구간이 추가된다.")
     @Test
     void addSection() {

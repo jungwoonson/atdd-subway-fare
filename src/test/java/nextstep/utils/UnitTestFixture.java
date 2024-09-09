@@ -12,6 +12,7 @@ import java.util.List;
 public class UnitTestFixture {
     public static final String RED = "bg-red-600";
     public static final int DEFAULT_DISTANCE = 10;
+    public static final int DEFAULT_DURATION = 5;
     public static final int DISTANCE_4 = 4;
     public static final int DISTANCE_6 = 6;
     public static final int DISTANCE_7 = 7;
@@ -27,44 +28,19 @@ public class UnitTestFixture {
     public static final List<Section> 연결된구간 = List.of(강남역_양재역, 양재역_교대역, 교대역_홍대역, 홍대역_강남역);
 
     public static Line 신분당선(Station upStation, Station downStation) {
-        return Line.builder()
-                .id(1L)
-                .name("2호선")
-                .color("bg-red-600")
-                .upStation(upStation)
-                .downStation(downStation)
-                .distance(DEFAULT_DISTANCE)
-                .build();
+        return createLine("신분당선", RED, upStation, downStation, DEFAULT_DISTANCE, DEFAULT_DURATION);
     }
 
     public static Line 분당선(Station upStation, Station downStation) {
-        return Line.builder()
-                .name("분당선")
-                .color(RED)
-                .upStation(upStation)
-                .downStation(downStation)
-                .distance(DISTANCE_4)
-                .build();
+        return createLine("분당선", RED, upStation, downStation, DEFAULT_DISTANCE, DEFAULT_DURATION);
     }
 
     public static Line 중앙선(Station upStation, Station downStation) {
-        return Line.builder()
-                .name("중앙선")
-                .color(RED)
-                .upStation(upStation)
-                .downStation(downStation)
-                .distance(DISTANCE_6)
-                .build();
+        return createLine("중앙선", RED, upStation, downStation, DISTANCE_6, DEFAULT_DURATION);
     }
 
     public static Line 경의선(Station upStation, Station downStation) {
-        return Line.builder()
-                .name("경의선")
-                .color(RED)
-                .upStation(upStation)
-                .downStation(downStation)
-                .distance(DISTANCE_7)
-                .build();
+        return createLine("경의선", RED, upStation, downStation, DISTANCE_7, DEFAULT_DURATION);
     }
 
     public static Section createSection(Line line, Station upStation, Station downStation, int distance) {
@@ -73,6 +49,27 @@ public class UnitTestFixture {
                 .upStation(upStation)
                 .downStation(downStation)
                 .distance(distance)
+                .build();
+    }
+
+    public static Line createLine(String name, String color, Station upStation, Station downStation, int distance, int duration) {
+        return Line.builder()
+                .name(name)
+                .color(color)
+                .upStation(upStation)
+                .downStation(downStation)
+                .distance(distance)
+                .duration(duration)
+                .build();
+    }
+
+    public static Section createSection(Line line, Station upStation, Station downStation, int distance, int duration) {
+        return Section.builder()
+                .line(line)
+                .upStation(upStation)
+                .downStation(downStation)
+                .distance(distance)
+                .duration(duration)
                 .build();
     }
 

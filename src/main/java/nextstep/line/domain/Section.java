@@ -24,6 +24,8 @@ public class Section {
     @Column(nullable = false)
     private Integer distance;
     @Column(nullable = false)
+    private Integer duration;
+    @Column(nullable = false)
     private boolean isFirst;
 
     public Section() {
@@ -34,6 +36,16 @@ public class Section {
         this.upStation = builder.upStation;
         this.downStation = builder.downStation;
         this.distance = builder.distance;
+        this.duration = builder.duration;
+        this.isFirst = false;
+    }
+
+    public Section(Line line, Station upStation, Station downStation, Integer distance, Integer duration) {
+        this.line = line;
+        this.upStation = upStation;
+        this.downStation = downStation;
+        this.distance = distance;
+        this.duration = duration;
         this.isFirst = false;
     }
 
@@ -127,6 +139,7 @@ public class Section {
         private Station upStation;
         private Station downStation;
         private Integer distance;
+        private Integer duration;
 
         public Builder line(Line line) {
             this.line = line;
@@ -148,6 +161,11 @@ public class Section {
             return this;
         }
 
+        public Builder duration(Integer duration) {
+            this.duration = duration;
+            return this;
+        }
+
         public Section build() {
             return new Section(this);
         }
@@ -166,11 +184,12 @@ public class Section {
                 && Objects.equals(line.getId(), section.line.getId())
                 && Objects.equals(upStation, section.upStation)
                 && Objects.equals(downStation, section.downStation)
-                && Objects.equals(distance, section.distance);
+                && Objects.equals(distance, section.distance)
+                && Objects.equals(duration, section.duration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(line.getId(), upStation, downStation, distance, isFirst);
+        return Objects.hash(line.getId(), upStation, downStation, distance, duration, isFirst);
     }
 }
