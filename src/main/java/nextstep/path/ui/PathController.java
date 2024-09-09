@@ -18,11 +18,11 @@ public class PathController {
     }
 
     @GetMapping("/paths")
-    public ResponseEntity<PathsResponse> findShortestPath(@RequestParam("source") Long source, @RequestParam("target") Long target) {
+    public ResponseEntity<PathsResponse> findShortestPath(@RequestParam("source") Long source, @RequestParam("target") Long target, @RequestParam("type") String type) {
         if (source.equals(target)) {
             throw new SameSourceAndTargetException();
         }
         return ResponseEntity.ok()
-                .body(pathService.findShortestPaths(source, target));
+                .body(pathService.findShortestPaths(source, target, type));
     }
 }

@@ -6,13 +6,15 @@ import java.util.List;
 
 public class PathsResponse {
     private int distance;
+    private int duration;
     private List<StationResponse> stations;
 
     public PathsResponse() {
     }
 
-    public PathsResponse(int distance, List<StationResponse> stations) {
+    public PathsResponse(int distance, int duration, List<StationResponse> stations) {
         this.distance = distance;
+        this.duration = duration;
         this.stations = stations;
     }
 
@@ -30,5 +32,13 @@ public class PathsResponse {
 
     public void setDistance(int distance) {
         this.distance = distance;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

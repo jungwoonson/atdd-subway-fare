@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import static nextstep.path.domain.PathType.DISTANCE;
 import static nextstep.utils.UnitTestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -61,7 +62,7 @@ public class PathServiceTest {
     @Test
     void findShortestPathsTest() {
         // when
-        PathsResponse pathsResponse = pathService.findShortestPaths(강남역.getId(), 교대역.getId());
+        PathsResponse pathsResponse = pathService.findShortestPaths(강남역.getId(), 교대역.getId(), DISTANCE.name());
 
         // then
         assertThat(pathsResponse.getStations()).isEqualTo(createStationResponse(강남역, 홍대역, 교대역));
@@ -75,7 +76,7 @@ public class PathServiceTest {
         Station 구간에없는역 = stationRepository.save(Station.of(구간에없는역_ID, 구간에없는역_NAME));
 
         // when
-        ThrowableAssert.ThrowingCallable actual = () -> pathService.findShortestPaths(구간에없는역.getId(), 교대역.getId());
+        ThrowableAssert.ThrowingCallable actual = () -> pathService.findShortestPaths(구간에없는역.getId(), 교대역.getId(), DISTANCE.name());
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotAddedStartToPathsException.class)
@@ -89,7 +90,7 @@ public class PathServiceTest {
         Station 구간에없는역 = stationRepository.save(Station.of(구간에없는역_ID, 구간에없는역_NAME));
 
         // when
-        ThrowableAssert.ThrowingCallable actual = () -> pathService.findShortestPaths(강남역.getId(), 구간에없는역.getId());
+        ThrowableAssert.ThrowingCallable actual = () -> pathService.findShortestPaths(강남역.getId(), 구간에없는역.getId(), DISTANCE.name());
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotAddedEndToPathsException.class)

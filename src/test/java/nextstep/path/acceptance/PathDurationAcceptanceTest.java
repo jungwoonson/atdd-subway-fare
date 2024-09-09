@@ -12,13 +12,13 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PathAcceptanceTest implements En {
+public class PathDurationAcceptanceTest implements En {
 
     private static final String DEFAULT_COLOR = "bg-red-600";
-    private static final int 분당_홍대_거리 = 10;
-    private static final int 홍대_강남_거리 = 4;
-    private static final int 강남_성수_거리 = 1;
-    private static final int 성수_분당_거리 = 8;
+    private static final int 분당_홍대_시간 = 10;
+    private static final int 홍대_강남_시간 = 4;
+    private static final int 강남_성수_시간 = 1;
+    private static final int 성수_분당_시간 = 8;
 
     public Long 분당역_ID;
     public Long 홍대역_ID;
@@ -27,31 +27,32 @@ public class PathAcceptanceTest implements En {
 
     private ExtractableResponse<Response> response;
 
-    public PathAcceptanceTest() {
-        Given("지하철역이 등록되어 있다", () -> {
+    public PathDurationAcceptanceTest() {
+        Given("지하철역이 등록되어있음", () -> {
             분당역_ID = createStation("분당역");
             홍대역_ID = createStation("홍대역");
             강남역_ID = createStation("강남역");
             성수역_ID = createStation("성수역");
         });
 
-        Given("지하철 노선이 등록되어 있다", () -> {
-            createLine(createLineParam("신분당선", 분당역_ID, 홍대역_ID, 분당_홍대_거리));
-            createLine(createLineParam("분당선", 홍대역_ID, 강남역_ID, 홍대_강남_거리));
-            createLine(createLineParam("경의선", 강남역_ID, 성수역_ID, 강남_성수_거리));
-            createLine(createLineParam("중앙선", 성수역_ID, 분당역_ID, 성수_분당_거리));
+        Given("지하철이 등록된 노선이 등록되어있음", () -> {
+            createLine(createLineParam("신분당선", 분당역_ID, 홍대역_ID, 분당_홍대_시간));
+            createLine(createLineParam("분당선", 홍대역_ID, 강남역_ID, 홍대_강남_시간));
+            createLine(createLineParam("경의선", 강남역_ID, 성수역_ID, 강남_성수_시간));
+            createLine(createLineParam("중앙선", 성수역_ID, 분당역_ID, 성수_분당_시간));
         });
 
-        When("출발역과 도착역을 입력하여 최단거리 경로를 조회하면", () -> {
-            response = findShortestPaths(강남역_ID, 분당역_ID);
+        When("출발역에서 도착역까지의 최소 시간 기준으로 경로 조회를 요청", () -> {
+            response = findShortestDurationPaths(강남역_ID, 분당역_ID);
         });
 
-        Then("출발역에서 도착역까지 최단거리의 경로가 조회된다", () -> {
+        Then("최소 시간 기준 경로를 응답", () -> {
             assertThat(getStationIds(response)).containsExactly(강남역_ID, 성수역_ID, 분당역_ID);
         });
 
-        Then("출발역에서 도착역까지 최단거리가 조회된다", () -> {
-            assertThat(getDistance(response)).isEqualTo(강남_성수_거리 + 성수_분당_거리);
+        Then("총 거리와 소요 시간을 함께 응답함", () -> {
+            assertThat(getDistance(response)).isEqualTo(20);
+            assertThat(getDuration(response)).isEqualTo(강남_성수_시간 + 성수_분당_시간);
         });
     }
 
@@ -77,20 +78,20 @@ public class PathAcceptanceTest implements En {
                 .extract();
     }
 
-    private Map<String, Object> createLineParam(String name, Long upStationId, Long downStationId, int distance) {
+    private Map<String, Object> createLineParam(String name, Long upStationId, Long downStationId, int duration) {
         return Map.of(
                 "name", name,
                 "color", DEFAULT_COLOR,
                 "upStationId", upStationId,
                 "downStationId", downStationId,
-                "distance", distance,
-                "duration", 10
+                "distance", 10,
+                "duration", duration
         );
     }
 
-    private ExtractableResponse<Response> findShortestPaths(Long source, Long target) {
+    private ExtractableResponse<Response> findShortestDurationPaths(Long source, Long target) {
         return RestAssured.given().log().all()
-                .when().get(String.format("/paths?source=%d&target=%d", source, target))
+                .when().get(String.format("/paths?source=%d&target=%d&type=DURATION", source, target))
                 .then().log().all()
                 .extract();
     }
@@ -103,5 +104,10 @@ public class PathAcceptanceTest implements En {
     private static int getDistance(ExtractableResponse<Response> response) {
         return response.jsonPath()
                 .getInt("distance");
+    }
+
+    private static int getDuration(ExtractableResponse<Response> response) {
+        return response.jsonPath()
+                .getInt("duration");
     }
 }

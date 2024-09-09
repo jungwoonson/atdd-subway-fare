@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static nextstep.path.domain.PathType.DISTANCE;
 import static nextstep.utils.UnitTestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -58,7 +59,7 @@ public class PathServiceMockTest {
         when(sectionRepository.findAll()).thenReturn(연결된구간);
 
         // when
-        PathsResponse pathsResponse = pathService.findShortestPaths(강남역.getId(), 교대역.getId());
+        PathsResponse pathsResponse = pathService.findShortestPaths(강남역.getId(), 교대역.getId(), DISTANCE.name());
 
         // then
         assertThat(pathsResponse.getStations()).isEqualTo(createStationResponse(강남역, 홍대역, 교대역));
@@ -76,7 +77,7 @@ public class PathServiceMockTest {
         when(stationService.lookUp(교대역.getId())).thenReturn(교대역);
 
         // when
-        ThrowingCallable actual = () -> pathService.findShortestPaths(구간에없는역.getId(), 교대역.getId());
+        ThrowingCallable actual = () -> pathService.findShortestPaths(구간에없는역.getId(), 교대역.getId(), DISTANCE.name());
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotAddedStartToPathsException.class)
@@ -94,7 +95,7 @@ public class PathServiceMockTest {
         when(stationService.lookUp(구간에없는역.getId())).thenReturn(구간에없는역);
 
         // when
-        ThrowingCallable actual = () -> pathService.findShortestPaths(강남역.getId(), 구간에없는역.getId());
+        ThrowingCallable actual = () -> pathService.findShortestPaths(강남역.getId(), 구간에없는역.getId(), DISTANCE.name());
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotAddedEndToPathsException.class)

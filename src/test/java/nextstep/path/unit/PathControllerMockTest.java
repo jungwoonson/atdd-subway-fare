@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static nextstep.path.domain.PathType.DISTANCE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,7 +28,8 @@ public class PathControllerMockTest {
         // when & then
         mockMvc.perform(get("/paths")
                         .param("source", stationId)
-                        .param("target", stationId))
+                        .param("target", stationId)
+                        .param("type", DISTANCE.name()))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("출발역과 도착역은 달라야합니다."));
     }

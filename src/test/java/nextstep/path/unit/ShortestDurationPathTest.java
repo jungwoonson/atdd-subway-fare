@@ -3,9 +3,10 @@ package nextstep.path.unit;
 import nextstep.line.domain.Section;
 import nextstep.path.application.exception.NotAddedStationsToPathsException;
 import nextstep.path.application.exception.NotConnectedPathsException;
-import nextstep.path.domain.ShortestPath;
+import nextstep.path.domain.ShortestDistancePath;
+import nextstep.path.domain.ShortestDurationPath;
 import nextstep.station.domain.Station;
-import org.assertj.core.api.ThrowableAssert;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,17 +20,17 @@ import static nextstep.utils.UnitTestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class ShortestPathTest {
+public class ShortestDurationPathTest {
     private static final List<Section> 열결되지않은구간 = List.of(강남역_양재역, 교대역_홍대역);
 
     @DisplayName("지하철역 조회 함수는, 가장 짧은 지하철 역 목록을 반환한다.")
     @Test
     void getStations() {
         // given
-        ShortestPath shortestPath = ShortestPath.from(연결된구간);
+        ShortestDurationPath shortestDurationPath = ShortestDurationPath.from(연결된구간);
 
         // when
-        List<Station> actual =  shortestPath.getStations(강남역, 교대역);
+        List<Station> actual =  shortestDurationPath.getStations(강남역, 교대역);
 
         // then
         assertThat(actual).isEqualTo(List.of(강남역, 홍대역, 교대역));
@@ -39,36 +40,49 @@ public class ShortestPathTest {
     @Test
     void getStationsNotConnectedStationsExceptionTest() {
         // given
-        ShortestPath shortestPath = ShortestPath.from(열결되지않은구간);
+        ShortestDurationPath shortestDurationPath = ShortestDurationPath.from(열결되지않은구간);
 
         // when
-        ThrowableAssert.ThrowingCallable actual = () -> shortestPath.getStations(강남역, 교대역);
+        ThrowingCallable actual = () -> shortestDurationPath.getStations(강남역, 교대역);
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotConnectedPathsException.class);
     }
 
-    @DisplayName("거리 조회 함수는, 가장 짧은 거리를 반환한다.")
+    @DisplayName("시간 조회 함수는, 가장 짧은 시간을 반환한다.")
+    @Test
+    void getDuration() {
+        // given
+        ShortestDurationPath shortestDurationPath = ShortestDurationPath.from(연결된구간);
+
+        // when
+        int actual =  shortestDurationPath.getDuration(강남역, 교대역);
+
+        // then
+        assertThat(actual).isEqualTo(DEFAULT_DURATION + DURATION_2);
+    }
+
+    @DisplayName("거리 조회 함수는, 가장 짧은 시간의 거리를 반환한다.")
     @Test
     void getDistance() {
         // given
-        ShortestPath shortestPath = ShortestPath.from(연결된구간);
+        ShortestDistancePath shortestDistancePath = ShortestDistancePath.from(연결된구간);
 
         // when
-        int actual =  shortestPath.getDistance(강남역, 교대역);
+        int actual =  shortestDistancePath.getDistance(강남역, 교대역);
 
         // then
         assertThat(actual).isEqualTo(DISTANCE_6 + DISTANCE_7);
     }
 
-    @DisplayName("거리 조회 함수는, 출발역과 도착역이 연결되어있지 않으면 예외를 발생한다.")
+    @DisplayName("시간 조회 함수는, 출발역과 도착역이 연결되어있지 않으면 예외를 발생한다.")
     @Test
-    void getDistanceNotConnectedStationsExceptionTest() {
+    void getDurationNotConnectedStationsExceptionTest() {
         // given
-        ShortestPath shortestPath = ShortestPath.from(열결되지않은구간);
+        ShortestDurationPath shortestDurationPath = ShortestDurationPath.from(열결되지않은구간);
 
         // when
-        ThrowableAssert.ThrowingCallable actual = () -> shortestPath.getDistance(강남역, 교대역);
+        ThrowingCallable actual = () -> shortestDurationPath.getDuration(강남역, 교대역);
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotConnectedPathsException.class);
@@ -79,10 +93,10 @@ public class ShortestPathTest {
     @MethodSource("validateContainsParams")
     void validateContainsTest(Station start, Station end, String expectedMessage) {
         // given
-        ShortestPath shortestPath = ShortestPath.from(연결된구간);
+        ShortestDurationPath shortestDurationPath = ShortestDurationPath.from(연결된구간);
 
         // when
-        ThrowableAssert.ThrowingCallable actual = () -> shortestPath.validateContains(start, end);
+        ThrowingCallable actual = () -> shortestDurationPath.validateContains(start, end);
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class)
@@ -101,10 +115,10 @@ public class ShortestPathTest {
     @Test
     void validateConnectedTest() {
         // given
-        ShortestPath shortestPath = ShortestPath.from(열결되지않은구간);
+        ShortestDurationPath shortestDurationPath = ShortestDurationPath.from(열결되지않은구간);
 
         // when
-        ThrowableAssert.ThrowingCallable actual = () -> shortestPath.validateConnected(강남역, 교대역);
+        ThrowingCallable actual = () -> shortestDurationPath.validateConnected(강남역, 교대역);
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotConnectedPathsException.class);
