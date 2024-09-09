@@ -23,56 +23,77 @@ public class UnitTestFixture {
     public static final Station 교대역 = Station.of(3L, "교대역");
     public static final Station 홍대역 = Station.of(4L, "홍대역");
     public static final Line 신분당선 = 신분당선(강남역, 양재역);
-    public static final Section 강남역_양재역 = createSection(신분당선, 강남역, 양재역, DEFAULT_DISTANCE, DEFAULT_DURATION);
-    public static final Section 양재역_교대역 = createSection(신분당선, 양재역, 교대역, DISTANCE_4, DURATION_3);
-    public static final Section 교대역_홍대역 = createSection(신분당선, 교대역, 홍대역, DISTANCE_6, DURATION_2);
-    public static final Section 홍대역_강남역 = createSection(신분당선, 홍대역, 강남역, DISTANCE_7, DEFAULT_DURATION);
+    public static final Section 강남역_양재역 = Section.builder()
+            .line(신분당선)
+            .upStation(강남역)
+            .downStation(양재역)
+            .distance(DEFAULT_DISTANCE)
+            .duration(DEFAULT_DURATION)
+            .build();
+    public static final Section 양재역_교대역 = Section.builder()
+            .line(신분당선)
+            .upStation(양재역)
+            .downStation(교대역)
+            .distance(DISTANCE_4)
+            .duration(DURATION_3)
+            .build();
+    public static final Section 교대역_홍대역 = Section.builder()
+            .line(신분당선)
+            .upStation(교대역)
+            .downStation(홍대역)
+            .distance(DISTANCE_6)
+            .duration(DURATION_2)
+            .build();
+    public static final Section 홍대역_강남역 = Section.builder()
+            .line(신분당선)
+            .upStation(홍대역)
+            .downStation(강남역)
+            .distance(DISTANCE_7)
+            .duration(DEFAULT_DURATION)
+            .build();
     public static final List<Section> 연결된구간 = List.of(강남역_양재역, 양재역_교대역, 교대역_홍대역, 홍대역_강남역);
 
     public static Line 신분당선(Station upStation, Station downStation) {
-        return createLine("신분당선", RED, upStation, downStation, DEFAULT_DISTANCE, DEFAULT_DURATION);
-    }
-
-    public static Line 분당선(Station upStation, Station downStation) {
-        return createLine("분당선", RED, upStation, downStation, DEFAULT_DISTANCE, DEFAULT_DURATION);
-    }
-
-    public static Line 중앙선(Station upStation, Station downStation) {
-        return createLine("중앙선", RED, upStation, downStation, DISTANCE_6, DEFAULT_DURATION);
-    }
-
-    public static Line 경의선(Station upStation, Station downStation) {
-        return createLine("경의선", RED, upStation, downStation, DISTANCE_7, DEFAULT_DURATION);
-    }
-
-    public static Line createLine(String name, String color, Station upStation, Station downStation, int distance, int duration) {
         return Line.builder()
-                .name(name)
-                .color(color)
+                .name("신분당선")
+                .color(RED)
                 .upStation(upStation)
                 .downStation(downStation)
-                .distance(distance)
-                .duration(duration)
-                .build();
-    }
-
-    public static Section createSection(Line line, Station upStation, Station downStation, int distance) {
-        return Section.builder()
-                .line(line)
-                .upStation(upStation)
-                .downStation(downStation)
-                .distance(distance)
+                .distance(DEFAULT_DISTANCE)
                 .duration(DEFAULT_DURATION)
                 .build();
     }
 
-    public static Section createSection(Line line, Station upStation, Station downStation, int distance, int duration) {
-        return Section.builder()
-                .line(line)
+    public static Line 분당선(Station upStation, Station downStation) {
+        return Line.builder()
+                .name("분당선")
+                .color(RED)
                 .upStation(upStation)
                 .downStation(downStation)
-                .distance(distance)
-                .duration(duration)
+                .distance(DEFAULT_DISTANCE)
+                .duration(DEFAULT_DURATION)
+                .build();
+    }
+
+    public static Line 중앙선(Station upStation, Station downStation) {
+        return Line.builder()
+                .name("중앙선")
+                .color(RED)
+                .upStation(upStation)
+                .downStation(downStation)
+                .distance(DISTANCE_6)
+                .duration(DEFAULT_DURATION)
+                .build();
+    }
+
+    public static Line 경의선(Station upStation, Station downStation) {
+        return Line.builder()
+                .name("경의선")
+                .color(RED)
+                .upStation(upStation)
+                .downStation(downStation)
+                .distance(DISTANCE_7)
+                .duration(DEFAULT_DURATION)
                 .build();
     }
 

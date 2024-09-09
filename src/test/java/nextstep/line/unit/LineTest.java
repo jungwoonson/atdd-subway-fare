@@ -20,8 +20,20 @@ class LineTest {
     @BeforeEach
     void setUp() {
         신분당선 = 신분당선(강남역, 양재역);
-        강남역_양재역 = createSection(신분당선, 강남역, 양재역, DEFAULT_DISTANCE);
-        양재역_교대역 = createSection(신분당선, 양재역, 교대역, DEFAULT_DISTANCE);
+        강남역_양재역 = Section.builder()
+                .line(신분당선)
+                .upStation(강남역)
+                .downStation(양재역)
+                .distance(DEFAULT_DISTANCE)
+                .duration(DEFAULT_DURATION)
+                .build();
+        양재역_교대역 = Section.builder()
+                .line(신분당선)
+                .upStation(양재역)
+                .downStation(교대역)
+                .distance(DEFAULT_DISTANCE)
+                .duration(DEFAULT_DURATION)
+                .build();
     }
 
     @DisplayName("노선 빌더는, 노선의 필수정포를 입력하면 노선이 생성된다.")
@@ -32,7 +44,14 @@ class LineTest {
         Line expected = new Line(새로운역, RED, 강남역, 양재역, DEFAULT_DISTANCE, DEFAULT_DURATION);
 
         // when
-        Line actual = createLine(새로운역, RED, 강남역, 양재역, DEFAULT_DISTANCE, DEFAULT_DURATION);
+        Line actual = Line.builder()
+                .name(새로운역)
+                .color(RED)
+                .upStation(강남역)
+                .downStation(양재역)
+                .distance(DEFAULT_DISTANCE)
+                .duration(DEFAULT_DURATION)
+                .build();
 
         // then
         assertThat(actual).isEqualTo(expected);

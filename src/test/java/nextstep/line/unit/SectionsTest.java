@@ -84,30 +84,72 @@ public class SectionsTest {
     }
 
     private static Section 양재역_교대역() {
-        return createSection(신분당선, 양재역, 교대역, DEFAULT_DISTANCE);
+        return Section.builder()
+                .line(신분당선)
+                .upStation(양재역)
+                .downStation(교대역)
+                .distance(DEFAULT_DISTANCE)
+                .duration(DEFAULT_DURATION)
+                .build();
     }
 
     private static Section 강남역_양재역() {
-        return createSection(신분당선, 강남역, 양재역, DEFAULT_DISTANCE);
+        return Section.builder()
+                .line(신분당선)
+                .upStation(강남역)
+                .downStation(양재역)
+                .distance(DEFAULT_DISTANCE)
+                .duration(DEFAULT_DURATION)
+                .build();
     }
 
     private static Section 강남역_홍대역() {
-        return createSection(신분당선, 강남역, 홍대역, DISTANCE_4, DURATION_3);
+        return Section.builder()
+                .line(신분당선)
+                .upStation(강남역)
+                .downStation(홍대역)
+                .distance(DISTANCE_4)
+                .duration(DURATION_3)
+                .build();
     }
 
     private static Section 홍대역_양재역() {
-        return createSection(신분당선, 홍대역, 양재역, DISTANCE_6, DURATION_2);
+        return Section.builder()
+                .line(신분당선)
+                .upStation(홍대역)
+                .downStation(양재역)
+                .distance(DISTANCE_6)
+                .duration(DURATION_2)
+                .build();
     }
 
     private static Section 양재역_강남역() {
-        return createSection(신분당선, 양재역, 강남역, DEFAULT_DISTANCE);
+        return Section.builder()
+                .line(신분당선)
+                .upStation(양재역)
+                .downStation(강남역)
+                .distance(DEFAULT_DISTANCE)
+                .duration(DEFAULT_DURATION)
+                .build();
     }
 
     private static Section 교대역_양재역() {
-        return createSection(신분당선, 교대역, 양재역, DEFAULT_DISTANCE);
+        return Section.builder()
+                .line(신분당선)
+                .upStation(교대역)
+                .downStation(양재역)
+                .distance(DEFAULT_DISTANCE)
+                .duration(DEFAULT_DURATION)
+                .build();
     }
 
     private static Section 강남역_교대역() {
-        return createSection(신분당선, 강남역, 교대역, DEFAULT_DISTANCE + DEFAULT_DISTANCE);
+        return Section.builder()
+                .line(신분당선)
+                .upStation(강남역)
+                .downStation(교대역)
+                .distance(DEFAULT_DISTANCE + DEFAULT_DISTANCE)
+                .duration(DEFAULT_DURATION)
+                .build();
     }
 }
