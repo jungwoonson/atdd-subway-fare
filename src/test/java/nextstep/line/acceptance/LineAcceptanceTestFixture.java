@@ -16,15 +16,17 @@ public class LineAcceptanceTestFixture {
     
     public static final String RED = "bg-red-600";
     public static final String GREEN = "bg-green-600";
-    
+
+    public static final Integer DEFAULT_DISTANCE = 10;
+    public static final Integer DEFAULT_DURATION = 5;
+
     public static final String 분당역 = "분당역";
     public static final String 홍대역 = "홍대역";
     public static final String 강남역 = "강남역";
     public static final String 성수역 = "성수역";
     
     public static final Long 생성된적없는_역_ID = -1L;
-    
-    public static final Integer DEFAULT_DISTANCE = 10;
+
     public static final Integer 분당_강남_거리 = 4;
     public static final Integer 분당_성수_거리 = 6;
 
@@ -47,7 +49,8 @@ public class LineAcceptanceTestFixture {
                 "color", RED,
                 "upStationId", upStationId,
                 "downStationId", downStationId,
-                "distance", distance
+                "distance", distance,
+                "duration", DEFAULT_DURATION
         );
     }
 
