@@ -1,6 +1,7 @@
 package nextstep.line.domain;
 
 import nextstep.line.application.exception.NotLessThanExistingDistanceException;
+import nextstep.line.application.exception.NotLessThanExistingDurationException;
 import nextstep.station.domain.Station;
 
 import javax.persistence.*;
@@ -66,12 +67,15 @@ public class Section {
         if (distance <= section.distance) {
             throw new NotLessThanExistingDistanceException();
         }
+        if (duration <= section.duration) {
+            throw new NotLessThanExistingDurationException();
+        }
         return new Builder()
                 .line(line)
                 .upStation(section.downStation)
                 .downStation(downStation)
                 .distance(distance - section.distance)
-                .duration(duration)
+                .duration(duration - section.duration)
                 .build();
     }
 

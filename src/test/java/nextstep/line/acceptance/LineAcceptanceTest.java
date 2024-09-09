@@ -155,7 +155,7 @@ public class LineAcceptanceTest {
     void addSectionTest() {
         List<Arguments> fixtures = addSectionFixtures();
 
-        for (Arguments arguments : fixtures){
+        for (Arguments arguments : fixtures) {
             // given
             ExtractableResponse<Response> createdLineResponse = createLine((Map<String, Object>) arguments.get()[LINE_CREATION_PARAMS_INDEX]);
             Map<String, Object> sectionParams = (Map<String, Object>) arguments.get()[SECTION_PARAMS_INDEX];
@@ -173,9 +173,9 @@ public class LineAcceptanceTest {
 
     private List<Arguments> addSectionFixtures() {
         return List.of(
-            Arguments.of(신분당선_PARAM, createSectionParam(홍대역_ID, 강남역_ID, DEFAULT_DISTANCE), List.of(분당역_ID, 홍대역_ID, 강남역_ID)),
-            Arguments.of(분당선_PARAM, createSectionParam(홍대역_ID, 분당역_ID, DEFAULT_DISTANCE), List.of(홍대역_ID, 분당역_ID, 강남역_ID)),
-            Arguments.of(신분당선_PARAM, createSectionParam(분당역_ID, 성수역_ID, 분당_성수_거리), List.of(분당역_ID, 성수역_ID, 홍대역_ID))
+                Arguments.of(신분당선_PARAM, createSectionParam(홍대역_ID, 강남역_ID, DEFAULT_DISTANCE), List.of(분당역_ID, 홍대역_ID, 강남역_ID)),
+                Arguments.of(분당선_PARAM, createSectionParam(홍대역_ID, 분당역_ID, DEFAULT_DISTANCE), List.of(홍대역_ID, 분당역_ID, 강남역_ID)),
+                Arguments.of(신분당선_PARAM, createSectionParam(분당역_ID, 성수역_ID, 분당_성수_거리, 분당_성수_시간), List.of(분당역_ID, 성수역_ID, 홍대역_ID))
         );
     }
 

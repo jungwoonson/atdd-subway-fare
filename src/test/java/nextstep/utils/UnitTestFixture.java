@@ -16,6 +16,8 @@ public class UnitTestFixture {
     public static final int DISTANCE_4 = 4;
     public static final int DISTANCE_6 = 6;
     public static final int DISTANCE_7 = 7;
+    public static final int DURATION_2 = 2;
+    public static final int DURATION_3 = 3;
     public static final Station 강남역 = Station.of(1L, "강남역");
     public static final Station 양재역 = Station.of(2L, "양재역");
     public static final Station 교대역 = Station.of(3L, "교대역");

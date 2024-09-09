@@ -1,6 +1,7 @@
 package nextstep.line.unit;
 
 import nextstep.line.application.exception.NotLessThanExistingDistanceException;
+import nextstep.line.application.exception.NotLessThanExistingDurationException;
 import nextstep.line.domain.Section;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;
@@ -31,8 +32,8 @@ public class SectionTest {
     void dividedSectionTest() {
         // given
         Section 강남역_양재역 = createSection(신분당선, 강남역, 양재역, DEFAULT_DISTANCE);
-        Section 강남역_홍대역 = createSection(신분당선, 강남역, 홍대역, DISTANCE_4);
-        Section 홍대역_양재역 = createSection(신분당선, 홍대역, 양재역, DISTANCE_6);
+        Section 강남역_홍대역 = createSection(신분당선, 강남역, 홍대역, DISTANCE_4, DURATION_3);
+        Section 홍대역_양재역 = createSection(신분당선, 홍대역, 양재역, DISTANCE_6, DURATION_2);
 
         // when
         Section actual = 강남역_양재역.dividedSection(강남역_홍대역);
@@ -53,6 +54,19 @@ public class SectionTest {
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotLessThanExistingDistanceException.class);
+    }
+
+    @Test
+    @DisplayName("구간 분리 함시 실행 중, 새로운 구간의 소요시간이 기존 구간의 소요시간보다 크거나 같으면 예외를 발생시킨다.")
+    void GraterOrEqualExistingDurationExceptionTest() {// given
+        Section 강남역_양재역 = createSection(신분당선, 강남역, 양재역, DEFAULT_DISTANCE, DEFAULT_DURATION);
+        Section 강남역_홍대역 = createSection(신분당선, 강남역, 홍대역, 9, DEFAULT_DURATION);
+
+        // when
+        ThrowingCallable actual = () -> 강남역_양재역.dividedSection(강남역_홍대역);
+
+        // then
+        assertThatThrownBy(actual).isInstanceOf(NotLessThanExistingDurationException.class);
     }
 
     @Test

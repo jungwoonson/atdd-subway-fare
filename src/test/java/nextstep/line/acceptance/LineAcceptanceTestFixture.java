@@ -29,6 +29,7 @@ public class LineAcceptanceTestFixture {
 
     public static final Integer 분당_강남_거리 = 4;
     public static final Integer 분당_성수_거리 = 6;
+    public static final Integer 분당_성수_시간 = 3;
 
     public static final Map<String, Object> MODIFY_PARAM = Map.of(
             "name", 분당선,
@@ -41,6 +42,15 @@ public class LineAcceptanceTestFixture {
                 "downStationId", downStationId,
                 "distance", distance,
                 "duration", DEFAULT_DURATION
+        );
+    }
+
+    public static Map<String, Object> createSectionParam(Long upStationId, Long downStationId, int distance, int duration) {
+        return Map.of(
+                "upStationId", upStationId,
+                "downStationId", downStationId,
+                "distance", distance,
+                "duration", duration
         );
     }
     
