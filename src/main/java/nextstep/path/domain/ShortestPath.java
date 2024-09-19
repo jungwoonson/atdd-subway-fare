@@ -3,6 +3,7 @@ package nextstep.path.domain;
 import nextstep.line.domain.Section;
 import nextstep.path.application.exception.NotAddedEndToPathsException;
 import nextstep.path.application.exception.NotAddedStartToPathsException;
+import nextstep.path.application.exception.NotAddedStationsToPathsException;
 import nextstep.path.application.exception.NotConnectedPathsException;
 import nextstep.station.domain.Station;
 import org.jgrapht.GraphPath;
@@ -70,4 +71,11 @@ public abstract class ShortestPath {
     public abstract int getDistance(Station start, Station end);
 
     public abstract int getDuration(Station start, Station end);
+
+    public Station lookUpStation(Long station_id) {
+        return graph.vertexSet().stream()
+                .filter(station -> station_id.equals(station.getId()))
+                .findFirst()
+                .orElseThrow(() -> new NotAddedStationsToPathsException("station_id " + station_id));
+    }
 }

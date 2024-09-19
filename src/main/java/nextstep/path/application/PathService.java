@@ -32,8 +32,8 @@ public class PathService {
     public PathsResponse findShortestPaths(Long source, Long target, String type) {
         ShortestPath shortestPath = createShortestPath(source, target, PathType.lookUp(type));
 
-        Station start = stationService.lookUp(source);
-        Station end = stationService.lookUp(target);
+        Station start = shortestPath.lookUpStation(source);
+        Station end = shortestPath.lookUpStation(target);
 
         return new PathsResponse(shortestPath.getDistance(start, end), shortestPath.getDuration(start, end), createStationResponses(shortestPath.getStations(start, end)));
     }
@@ -41,10 +41,9 @@ public class PathService {
     public void validatePaths(Long source, Long target) {
         ShortestPath shortestPath = createShortestPath(source, target, DISTANCE);
 
-        Station start = stationService.lookUp(source);
-        Station end = stationService.lookUp(target);
+        Station start = shortestPath.lookUpStation(source);
+        Station end = shortestPath.lookUpStation(target);
 
-        shortestPath.validateContains(start, end);
         shortestPath.validateConnected(start, end);
     }
 
