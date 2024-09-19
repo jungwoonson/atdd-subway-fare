@@ -28,7 +28,7 @@
 - [ ] 경로 조회 결과에 요금 정보를 포함
 
 ### 작업목록
-- [ ] Cucumber 컨밴션 통일
+- [x] Cucumber 컨밴션 통일
 - [ ] ShortestPath 에서 Station 정보 추출
 - [ ] ShortestPathFactory 존재 의미 고민
 - [ ] 경로 조회 결과에 요금 정보 추가
