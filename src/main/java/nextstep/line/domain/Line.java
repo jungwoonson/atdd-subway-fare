@@ -1,5 +1,6 @@
 package nextstep.line.domain;
 
+import nextstep.fare.domain.Fare;
 import nextstep.station.domain.Station;
 import nextstep.station.domain.Stations;
 
@@ -16,6 +17,8 @@ public class Line {
     private String name;
     @Column(length = 20, nullable = false)
     private String color;
+    @Embedded
+    private Fare fare;
 
     @Embedded
     private Sections sections;
@@ -27,6 +30,7 @@ public class Line {
         this.id = builder.id;
         this.name = builder.name;
         this.color = builder.color;
+        this.fare = builder.fare;
         this.sections = Sections.from(Section.builder()
                 .line(this)
                 .upStation(builder.upStation)
@@ -36,9 +40,10 @@ public class Line {
                 .build());
     }
 
-    public Line(String name, String color, Station upStation, Station downStation, Integer distance, Integer duration) {
+    public Line(String name, String color, Station upStation, Station downStation, Integer distance, Integer duration, long fare) {
         this.name = name;
         this.color = color;
+        this.fare = Fare.from(fare);
         this.sections = Sections.from(Section.builder()
                 .line(this)
                 .upStation(upStation)
@@ -48,9 +53,10 @@ public class Line {
                 .build());
     }
 
-    public void modify(String name, String color) {
+    public void modify(String name, String color, Fare fare) {
         this.name = name;
         this.color = color;
+        this.fare = fare;
     }
 
     public void addSection(Station upStation, Station downStation, Integer distance, Integer duration) {
@@ -82,6 +88,10 @@ public class Line {
         return color;
     }
 
+    public Fare getFare() {
+        return fare;
+    }
+
     public Sections getSections() {
         return sections;
     }
@@ -98,6 +108,7 @@ public class Line {
         private Station downStation;
         private Integer distance;
         private Integer duration;
+        private Fare fare = Fare.zero();
 
         public Builder id(Long id) {
             this.id = id;
@@ -134,6 +145,11 @@ public class Line {
             return this;
         }
 
+        public Builder fare(long fare) {
+            this.fare = Fare.from(fare);
+            return this;
+        }
+
         public Line build() {
             return new Line(this);
         }
@@ -151,11 +167,12 @@ public class Line {
         return Objects.equals(id, line.id)
                 && Objects.equals(name, line.name)
                 && Objects.equals(color, line.color)
+                && Objects.equals(fare, line.fare)
                 && Objects.equals(sections, line.sections);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, color, sections);
+        return Objects.hash(id, name, color, fare, sections);
     }
 }

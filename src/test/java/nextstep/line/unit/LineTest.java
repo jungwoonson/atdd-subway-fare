@@ -1,5 +1,6 @@
 package nextstep.line.unit;
 
+import nextstep.fare.domain.Fare;
 import nextstep.line.domain.Line;
 import nextstep.line.domain.Section;
 import nextstep.line.domain.Sections;
@@ -36,12 +37,12 @@ class LineTest {
                 .build();
     }
 
-    @DisplayName("노선 빌더는, 노선의 필수정포를 입력하면 노선이 생성된다.")
+    @DisplayName("노선 빌더는, 노선의 필수정보를 입력하면 노선이 생성된다.")
     @Test
     void createLineTest() {
         // given
         String 새로운역 = "새로운역";
-        Line expected = new Line(새로운역, RED, 강남역, 양재역, DEFAULT_DISTANCE, DEFAULT_DURATION);
+        Line expected = new Line(새로운역, RED, 강남역, 양재역, DEFAULT_DISTANCE, DEFAULT_DURATION, ZERO_FARE);
 
         // when
         Line actual = Line.builder()
@@ -56,6 +57,31 @@ class LineTest {
         // then
         assertThat(actual).isEqualTo(expected);
     }
+
+    @DisplayName("노선 수정 함수는, 노선의 정보를 수정한다.")
+    @Test
+    void modifyTest() {
+        // given
+        String 수정된이름 = "수정된이름";
+        String 수정된색상 = "수정된색상";
+        long 수정된요금 = 1250L;
+        Line expected = Line.builder()
+                .name(수정된이름)
+                .color(수정된색상)
+                .upStation(강남역)
+                .downStation(양재역)
+                .distance(DEFAULT_DISTANCE)
+                .duration(DEFAULT_DURATION)
+                .fare(수정된요금)
+                .build();
+
+        // when
+        신분당선.modify(수정된이름, 수정된색상, Fare.from(수정된요금));
+
+        // then
+        assertThat(신분당선).isEqualTo(expected);
+    }
+
 
     @DisplayName("구간 추가 함수는, 노선의 구간을 추가하고 해당 노선의 목록을 조회하면 해당 구간이 추가된다.")
     @Test

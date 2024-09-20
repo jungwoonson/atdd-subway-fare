@@ -2,6 +2,7 @@ package nextstep.fare.unit;
 
 import nextstep.fare.domain.Fare;
 import nextstep.fare.domain.LessThanMinimumDistanceException;
+import nextstep.fare.domain.LessThanZeroFareException;
 import org.assertj.core.api.ThrowableAssert.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("요금 단위 테스트")
 public class FareTest {
 
-    private static final long BASE_FARE = 1250L;
+    private static final Long BASE_FARE = 1250L;
 
     @DisplayName("요금 생성 함수는, 1미만의 거리가 입력되면 예외가 발생한다.")
     @Test
-    void createFareExceptionTest() {
+    void createFareForDistanceExceptionTest() {
         // given
         int lessThenMinimumDistance = 0;
 
@@ -28,6 +29,19 @@ public class FareTest {
 
         // then
         assertThatThrownBy(actual).isInstanceOf(LessThanMinimumDistanceException.class);
+    }
+
+    @DisplayName("요금 생성 함수는, 0미만의 요금이 입력되면 예외가 발생한다.")
+    @Test
+    void createFareLessThenZeroExceptionTest() {
+        // given
+        Long lessThenZeroFare = -1L;
+
+        // when
+        ThrowingCallable actual = () -> Fare.from(lessThenZeroFare);
+
+        // then
+        assertThatThrownBy(actual).isInstanceOf(LessThanZeroFareException.class);
     }
 
     @DisplayName("요금 생성 함수는, 거리 1에서 10까지는 기본 요금을 생성한다.")
@@ -45,7 +59,7 @@ public class FareTest {
             "50, 2050"
     })
     @ParameterizedTest
-    void createAdditionalFareForExtendedDistanceTest(int distance, long expected) {
+    void createAdditionalFareForExtendedDistanceTest(int distance, Long expected) {
         assertFareForDistance(distance, expected);
     }
 
@@ -58,15 +72,35 @@ public class FareTest {
             "67, 2350"
     })
     @ParameterizedTest
-    void createAdditionalFareForLongDistanceTest(int distance, long expected) {
+    void createAdditionalFareForLongDistanceTest(int distance, Long expected) {
         assertFareForDistance(distance, expected);
     }
 
-    private void assertFareForDistance(int distance, long expectedFare) {
+    private void assertFareForDistance(int distance, Long expectedFare) {
         // when
         Fare fare = Fare.from(distance);
 
         // then
-        assertThat(fare).isEqualTo(new Fare(expectedFare));
+        assertThat(fare).isEqualTo(Fare.from(expectedFare));
+    }
+
+    @DisplayName("제로 요금 생성 함수는, 0원의 요금을 생성한다.")
+    @Test
+    void createZeroFareTest() {
+        // when
+        Fare fare = Fare.zero();
+
+        // then
+        assertThat(fare).isEqualTo(Fare.from(0L));
+    }
+
+    @DisplayName("기본 요금 생성 함수는, 1250원의 요금을 생성한다.")
+    @Test
+    void createBaseFareTest() {
+        // when
+        Fare fare = Fare.baseFare();
+
+        // then
+        assertThat(fare).isEqualTo(Fare.from(BASE_FARE));
     }
 }

@@ -1,5 +1,6 @@
 package nextstep.line.application;
 
+import nextstep.fare.domain.Fare;
 import nextstep.line.application.dto.LineRequest;
 import nextstep.line.application.dto.LineResponse;
 import nextstep.line.application.dto.SectionRequest;
@@ -50,7 +51,7 @@ public class LineService {
     @Transactional
     public LineResponse modifyLine(Long id, LineRequest lineRequest) {
         Line line = lookUpLineBy(id);
-        line.modify(lineRequest.getName(), lineRequest.getColor());
+        line.modify(lineRequest.getName(), lineRequest.getColor(), Fare.from(lineRequest.getFare()));
         return createLineResponse(lineRepository.save(line));
     }
 
@@ -89,6 +90,7 @@ public class LineService {
                 .downStation(lookUpStationBy(lineRequest.getDownStationId()))
                 .distance(lineRequest.getDistance())
                 .duration(lineRequest.getDuration())
+                .fare(lineRequest.getFare())
                 .build();
     }
 
@@ -97,6 +99,7 @@ public class LineService {
                 .id(line.getId())
                 .name(line.getName())
                 .color(line.getColor())
+                .fare(line.getFare())
                 .stations(createStationResponses(line.getStations()))
                 .build();
     }
