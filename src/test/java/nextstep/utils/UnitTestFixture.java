@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UnitTestFixture {
+
     public static final String RED = "bg-red-600";
     public static final int DEFAULT_DISTANCE = 10;
     public static final int DISTANCE_4 = 4;
@@ -23,6 +24,8 @@ public class UnitTestFixture {
     public static final Station 교대역 = Station.of(3L, "교대역");
     public static final Station 홍대역 = Station.of(4L, "홍대역");
     public static final Line 신분당선 = 신분당선(강남역, 양재역);
+    public static final long ZERO_FARE = 0L;
+
     public static final Section 강남역_양재역 = Section.builder()
             .line(신분당선)
             .upStation(강남역)

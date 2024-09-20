@@ -31,9 +31,12 @@ public class LineAcceptanceTestFixture {
     public static final Integer 분당_성수_거리 = 6;
     public static final Integer 분당_성수_시간 = 3;
 
+    public static final Long DEFAULT_FARE = 1250L;
+
     public static final Map<String, Object> MODIFY_PARAM = Map.of(
             "name", 분당선,
-            "color", GREEN
+            "color", GREEN,
+            "fare", DEFAULT_FARE
     );
 
     public static Map<String, Object> createSectionParam(Long upStationId, Long downStationId, int distance) {
@@ -61,7 +64,8 @@ public class LineAcceptanceTestFixture {
                 "upStationId", upStationId,
                 "downStationId", downStationId,
                 "distance", distance,
-                "duration", DEFAULT_DURATION
+                "duration", DEFAULT_DURATION,
+                "fare", DEFAULT_FARE
         );
     }
 
@@ -148,8 +152,13 @@ public class LineAcceptanceTestFixture {
                 .getString("name");
     }
 
-    public static long getId(ExtractableResponse<Response> createdLineResponse) {
-        return createdLineResponse.jsonPath()
+    public static long getId(ExtractableResponse<Response> response) {
+        return response.jsonPath()
                 .getLong("id");
+    }
+
+    public static long getFare(ExtractableResponse<Response> response) {
+        return response.jsonPath()
+                .getLong("fare");
     }
 }

@@ -1,5 +1,6 @@
 package nextstep.line.application.dto;
 
+import nextstep.fare.domain.Fare;
 import nextstep.station.application.dto.StationResponse;
 
 import java.util.List;
@@ -9,6 +10,7 @@ public class LineResponse {
     private Long id;
     private String name;
     private String color;
+    private Long fare;
     private List<StationResponse> stations;
 
     public Long getId() {
@@ -35,6 +37,14 @@ public class LineResponse {
         this.color = color;
     }
 
+    public Long getFare() {
+        return fare;
+    }
+
+    public void setFare(Long fare) {
+        this.fare = fare;
+    }
+
     public List<StationResponse> getStations() {
         return stations;
     }
@@ -51,6 +61,7 @@ public class LineResponse {
         private Long id;
         private String name;
         private String color;
+        private Long fare;
         private List<StationResponse> stations;
 
         public Builder id(Long id) {
@@ -68,6 +79,11 @@ public class LineResponse {
             return this;
         }
 
+        public Builder fare(Fare fare) {
+            this.fare = fare.getFare();
+            return this;
+        }
+
         public Builder stations(List<StationResponse> stations) {
             this.stations = stations;
             return this;
@@ -78,6 +94,7 @@ public class LineResponse {
             lineResponse.id = this.id;
             lineResponse.name = this.name;
             lineResponse.color = this.color;
+            lineResponse.fare = this.fare;
             lineResponse.stations = this.stations;
             return lineResponse;
         }

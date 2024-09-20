@@ -1,11 +1,13 @@
 package nextstep.fare.domain;
 
+import javax.persistence.Column;
 import java.util.Objects;
 
 public class Fare {
 
-    private static final long BASE_FARE = 1250L;
-    private static final long ADDITIONAL_FARE = 100L;
+    private static final Long BASE_FARE = 1250L;
+    private static final Long ADDITIONAL_FARE = 100L;
+    public static final Long ZERO_FARE = 0L;
 
     private static final int MINIMUM_DISTANCE = 1;
     private static final int BASE_FARE_DISTANCE_LIMIT = 10;
@@ -14,10 +16,33 @@ public class Fare {
     private static final int REDUCED_ADDITIONAL_FARE_INTERVAL = 8;
     private static final int FARE_ADJUSTMENT = 1;
 
-    private final long fare;
+    @Column(nullable = false)
+    private Long fare;
 
-    public Fare(final long fare) {
+    public Fare() {
+    }
+
+    private Fare(final Long fare) {
         this.fare = fare;
+    }
+
+    public static Fare zero() {
+        return new Fare(ZERO_FARE);
+    }
+
+    public static Fare baseFare() {
+        return new Fare(BASE_FARE);
+    }
+
+    public static Fare from(final Long fare) {
+        validateFare(fare);
+        return new Fare(fare);
+    }
+
+    private static void validateFare(final Long fare) {
+        if (fare < ZERO_FARE) {
+            throw new LessThanZeroFareException(fare);
+        }
     }
 
     public static Fare from(final int distance) {
@@ -31,7 +56,7 @@ public class Fare {
         }
     }
 
-    private static long calculateFare(final int distance) {
+    private static Long calculateFare(final int distance) {
         if (distance <= BASE_FARE_DISTANCE_LIMIT) {
             return BASE_FARE;
         }
@@ -41,22 +66,22 @@ public class Fare {
         return calculateAdditionalFareForLongDistance(distance);
     }
 
-    private static long calculateAdditionalFareForExtendedDistance(final int distance) {
+    private static Long calculateAdditionalFareForExtendedDistance(final int distance) {
         int additionalDistance = Math.min(distance, EXTENDED_FARE_DISTANCE_LIMIT) - BASE_FARE_DISTANCE_LIMIT - FARE_ADJUSTMENT;
         return BASE_FARE + calculateAdditionalFare(additionalDistance, ADDITIONAL_FARE_INTERVAL);
     }
 
-    private static long calculateAdditionalFareForLongDistance(final int distance) {
+    private static Long calculateAdditionalFareForLongDistance(final int distance) {
         int additionalDistance = distance - EXTENDED_FARE_DISTANCE_LIMIT - FARE_ADJUSTMENT;
         return calculateAdditionalFareForExtendedDistance(distance)
                 + calculateAdditionalFare(additionalDistance, REDUCED_ADDITIONAL_FARE_INTERVAL);
     }
 
-    private static long calculateAdditionalFare(final int additionalDistance, final int fareInterval) {
+    private static Long calculateAdditionalFare(final int additionalDistance, final int fareInterval) {
         return ADDITIONAL_FARE + (additionalDistance / fareInterval) * ADDITIONAL_FARE;
     }
 
-    public long getFare() {
+    public Long getFare() {
         return fare;
     }
 

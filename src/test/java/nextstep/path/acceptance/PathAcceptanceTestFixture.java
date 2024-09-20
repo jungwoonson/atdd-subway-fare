@@ -16,6 +16,8 @@ public class PathAcceptanceTestFixture {
     public static final int DEFAULT_DISTANCE = 10;
     public static final int DEFAULT_DURATION = 10;
 
+    public static final Long ZERO_FARE = 0L;
+
     public static Long createStation(String name) {
         Map<String, Object> params = new HashMap<>();
         params.put("name", name);
@@ -45,7 +47,8 @@ public class PathAcceptanceTestFixture {
                 "upStationId", upStationId,
                 "downStationId", downStationId,
                 "distance", distance,
-                "duration", duration
+                "duration", duration,
+                "fare", ZERO_FARE
         );
     }
 
