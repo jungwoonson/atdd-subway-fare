@@ -68,4 +68,8 @@ public class PathAcceptanceTestFixture {
     public static int getDuration(ExtractableResponse<Response> response) {
         return response.jsonPath().getInt("duration");
     }
+
+    public static long getFare(ExtractableResponse<Response> response) {
+        return response.jsonPath().getInt("fare");
+    }
 }

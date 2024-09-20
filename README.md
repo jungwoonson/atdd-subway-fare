@@ -31,4 +31,4 @@
 - [x] Cucumber 컨밴션 통일
 - [x] ShortestPath 에서 Station 정보 추출
 - [x] ShortestPathFactory 존재 의미 고민
-- [ ] 경로 조회 결과에 요금 정보 추가
+- [x] 경로 조회 결과에 요금 정보 추가

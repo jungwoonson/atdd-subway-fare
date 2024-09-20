@@ -2,6 +2,7 @@ package nextstep.path.application;
 
 import nextstep.line.domain.SectionRepository;
 import nextstep.path.application.dto.PathsResponse;
+import nextstep.path.domain.Fare;
 import nextstep.path.domain.PathType;
 import nextstep.path.domain.ShortestPath;
 import nextstep.path.ui.exception.SameSourceAndTargetException;
@@ -21,11 +22,9 @@ import static nextstep.path.domain.PathType.DISTANCE;
 public class PathService {
 
     private SectionRepository sectionRepository;
-    private StationService stationService;
 
-    public PathService(SectionRepository sectionRepository, StationService stationService) {
+    public PathService(SectionRepository sectionRepository) {
         this.sectionRepository = sectionRepository;
-        this.stationService = stationService;
     }
 
     public PathsResponse findShortestPaths(Long source, Long target, String type) {
@@ -34,7 +33,18 @@ public class PathService {
         Station start = shortestPath.lookUpStation(source);
         Station end = shortestPath.lookUpStation(target);
 
-        return new PathsResponse(shortestPath.getDistance(start, end), shortestPath.getDuration(start, end), createStationResponses(shortestPath.getStations(start, end)));
+        return createPathsResponse(shortestPath, start, end);
+    }
+
+    private PathsResponse createPathsResponse(ShortestPath shortestPath, Station start, Station end) {
+        int distance = shortestPath.getDistance(start, end);
+
+        return PathsResponse.builder()
+                .distance(distance)
+                .duration(shortestPath.getDuration(start, end))
+                .fare(Fare.from(distance))
+                .stations(createStationResponses(shortestPath.getStations(start, end)))
+                .build();
     }
 
     public void validatePaths(Long source, Long target) {

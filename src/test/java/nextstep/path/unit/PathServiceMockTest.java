@@ -40,14 +40,11 @@ public class PathServiceMockTest {
 
     @Mock
     private SectionRepository sectionRepository;
-    @Mock
-    private StationService stationService;
-
     private PathService pathService;
 
     @BeforeEach
     void setUp() {
-        pathService = new PathService(sectionRepository, stationService);
+        pathService = new PathService(sectionRepository);
     }
 
     @DisplayName("최단경로 조회 함수는, 출발역과 도착역을 입력하면 최단 경로 지하철 역 목록과 총 거리를 반환한다.")
