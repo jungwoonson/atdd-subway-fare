@@ -40,22 +40,17 @@ public class PathServiceMockTest {
 
     @Mock
     private SectionRepository sectionRepository;
-    @Mock
-    private StationService stationService;
-
     private PathService pathService;
 
     @BeforeEach
     void setUp() {
-        pathService = new PathService(sectionRepository, stationService);
+        pathService = new PathService(sectionRepository);
     }
 
     @DisplayName("최단경로 조회 함수는, 출발역과 도착역을 입력하면 최단 경로 지하철 역 목록과 총 거리를 반환한다.")
     @Test
     void findShortestPathsTest() {
         // given
-        when(stationService.lookUp(강남역.getId())).thenReturn(강남역);
-        when(stationService.lookUp(교대역.getId())).thenReturn(교대역);
         when(sectionRepository.findAll()).thenReturn(연결된구간);
 
         // when
@@ -73,15 +68,12 @@ public class PathServiceMockTest {
         Station 구간에없는역 = Station.of(구간에없는역_ID, 구간에없는역_NAME);
 
         when(sectionRepository.findAll()).thenReturn(연결된구간);
-        when(stationService.lookUp(구간에없는역.getId())).thenReturn(구간에없는역);
-        when(stationService.lookUp(교대역.getId())).thenReturn(교대역);
 
         // when
         ThrowingCallable actual = () -> pathService.findShortestPaths(구간에없는역.getId(), 교대역.getId(), DISTANCE.name());
 
         // then
-        assertThatThrownBy(actual).isInstanceOf(NotAddedStartToPathsException.class)
-                .hasMessageContaining(String.format("출발역(%s)", 구간에없는역.getName()));
+        assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class);
     }
 
     @DisplayName("최단경로 조회 함수는, 구간에 등록되지 않은 역이 도착역인 경우 예외를 발생한다.")
@@ -91,15 +83,12 @@ public class PathServiceMockTest {
         Station 구간에없는역 = Station.of(구간에없는역_ID, 구간에없는역_NAME);
 
         when(sectionRepository.findAll()).thenReturn(연결된구간);
-        when(stationService.lookUp(강남역.getId())).thenReturn(강남역);
-        when(stationService.lookUp(구간에없는역.getId())).thenReturn(구간에없는역);
 
         // when
         ThrowingCallable actual = () -> pathService.findShortestPaths(강남역.getId(), 구간에없는역.getId(), DISTANCE.name());
 
         // then
-        assertThatThrownBy(actual).isInstanceOf(NotAddedEndToPathsException.class)
-                .hasMessageContaining(String.format("도착역(%s)", 구간에없는역.getName()));
+        assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class);
     }
 
     @DisplayName("경로검사 합수는, 주어진 출발역과 도착역이 정상적인 경로를 생성할 수 없으면 예외를 발생시킨다.")
@@ -120,8 +109,6 @@ public class PathServiceMockTest {
         List<Section> 연결_안된_구간 = List.of(강남역_양재역, 교대역_홍대역);
 
         when(sectionRepository.findAll()).thenReturn(연결_안된_구간);
-        when(stationService.lookUp(source.getId())).thenReturn(source);
-        when(stationService.lookUp(target.getId())).thenReturn(target);
 
         // when
         ThrowingCallable actual = () -> pathService.validatePaths(target.getId(), source.getId());

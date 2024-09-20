@@ -19,6 +19,7 @@ import static nextstep.utils.UnitTestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@DisplayName("최단 거리 경로 테스트")
 public class ShortestDistancePathTest {
     private static final List<Section> 열결되지않은구간 = List.of(강남역_양재역, 교대역_홍대역);
 
@@ -121,5 +122,31 @@ public class ShortestDistancePathTest {
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotConnectedPathsException.class);
+    }
+
+    @DisplayName("역 조회 함수는, 주어진 역 id에 해당하는 역을 반환한다.")
+    @Test
+    void lookUpStationTest() {
+        // given
+        ShortestDistancePath shortestDistancePath = ShortestDistancePath.from(연결된구간);
+
+        // when
+        var actual = shortestDistancePath.lookUpStation(강남역.getId());
+
+        // then
+        assertThat(actual).isEqualTo(강남역);
+    }
+
+    @DisplayName("연결 확인 함수는, 주어진 역을 찾을 수 없을 경우 예외를 발생시킨다.")
+    @Test
+    void lookUpNotAddedStationsToPathsExceptionTest() {
+        // given
+        ShortestDistancePath shortestDistancePath = ShortestDistancePath.from(연결된구간);
+
+        // when
+        ThrowableAssert.ThrowingCallable actual = () -> shortestDistancePath.lookUpStation(0L);
+
+        // then
+        assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class);
     }
 }
