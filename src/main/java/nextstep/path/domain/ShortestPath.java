@@ -18,9 +18,9 @@ public abstract class ShortestPath {
     protected List<Section> sections;
     protected WeightedMultigraph<Station, DefaultWeightedEdge> graph;
 
-    public ShortestPath(List<Section> sections) {
+    protected ShortestPath(List<Section> sections, WeightedMultigraph<Station, DefaultWeightedEdge> graph) {
         this.sections = sections;
-        this.graph = createGraph(sections);
+        this.graph = graph;
     }
 
     public List<Station> getStations(Station start, Station end) {
@@ -66,16 +66,14 @@ public abstract class ShortestPath {
                 .orElseThrow(() -> new IllegalArgumentException("엣지에 해당하는 구간을 찾을 수 없습니다."));
     }
 
-    protected abstract WeightedMultigraph<Station, DefaultWeightedEdge> createGraph(List<Section> sections);
-
-    public abstract int getDistance(Station start, Station end);
-
-    public abstract int getDuration(Station start, Station end);
-
     public Station lookUpStation(Long station_id) {
         return graph.vertexSet().stream()
                 .filter(station -> station_id.equals(station.getId()))
                 .findFirst()
                 .orElseThrow(() -> new NotAddedStationsToPathsException("station_id " + station_id));
     }
+
+    public abstract int getDistance(Station start, Station end);
+
+    public abstract int getDuration(Station start, Station end);
 }

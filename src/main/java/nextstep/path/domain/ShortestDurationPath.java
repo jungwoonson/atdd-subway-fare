@@ -9,16 +9,15 @@ import java.util.List;
 
 public class ShortestDurationPath extends ShortestPath {
 
-    public ShortestDurationPath(List<Section> sections) {
-        super(sections);
+    public ShortestDurationPath(List<Section> sections, WeightedMultigraph<Station, DefaultWeightedEdge> graph) {
+        super(sections, graph);
     }
 
     public static ShortestDurationPath from(List<Section> sections) {
-        return new ShortestDurationPath(sections);
+        return new ShortestDurationPath(sections, createGraph(sections));
     }
 
-    @Override
-    protected WeightedMultigraph<Station, DefaultWeightedEdge> createGraph(List<Section> sections) {
+    private static WeightedMultigraph<Station, DefaultWeightedEdge> createGraph(List<Section> sections) {
         WeightedMultigraph<Station, DefaultWeightedEdge> graph = new WeightedMultigraph<>(DefaultWeightedEdge.class);
         sections.forEach(section -> {
             graph.addVertex(section.getUpStation());
