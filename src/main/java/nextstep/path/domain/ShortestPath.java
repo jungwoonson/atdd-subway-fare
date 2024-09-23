@@ -12,6 +12,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
 
 import java.util.List;
+import java.util.Set;
 
 public abstract class ShortestPath {
 
@@ -76,4 +77,6 @@ public abstract class ShortestPath {
     public abstract int getDistance(Station start, Station end);
 
     public abstract int getDuration(Station start, Station end);
+
+    public abstract Set<Section> getUsedSections(Station start, Station end);
 }

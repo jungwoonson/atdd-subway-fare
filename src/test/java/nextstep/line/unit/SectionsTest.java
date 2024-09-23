@@ -1,15 +1,18 @@
 package nextstep.line.unit;
 
+import nextstep.fare.domain.Fare;
 import nextstep.line.application.exception.DuplicateStationException;
 import nextstep.line.domain.Section;
 import nextstep.line.domain.Sections;
 import nextstep.station.domain.Station;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static nextstep.utils.UnitTestFixture.*;
@@ -73,6 +76,20 @@ public class SectionsTest {
 
         // then
         assertThat(sections).isEqualTo(expected);
+    }
+
+    @DisplayName("요금들 조회 함수는, 구간의 노선 요금들을 반환한다.")
+    @Test
+    void getFaresTest() {
+        // given
+        Sections sections = Sections.of(강남역_양재역(), 양재역_교대역());
+        List<Fare> expected = List.of(신분당선.getFare(), 신분당선.getFare());
+
+        // when
+        List<Fare> actual = sections.getFares();
+
+        // then
+        assertThat(actual).isEqualTo(expected);
     }
 
     private static Stream<Arguments> deleteSectionParameters() {

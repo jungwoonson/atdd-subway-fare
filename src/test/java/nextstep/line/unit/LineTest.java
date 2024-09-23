@@ -82,7 +82,6 @@ class LineTest {
         assertThat(신분당선).isEqualTo(expected);
     }
 
-
     @DisplayName("구간 추가 함수는, 노선의 구간을 추가하고 해당 노선의 목록을 조회하면 해당 구간이 추가된다.")
     @Test
     void addSection() {

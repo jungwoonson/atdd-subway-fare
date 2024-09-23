@@ -3,14 +3,12 @@ package nextstep.path.unit;
 import nextstep.line.domain.LineRepository;
 import nextstep.path.application.PathService;
 import nextstep.path.application.dto.PathsResponse;
-import nextstep.path.application.exception.NotAddedEndToPathsException;
-import nextstep.path.application.exception.NotAddedStartToPathsException;
 import nextstep.path.application.exception.NotAddedStationsToPathsException;
 import nextstep.station.domain.Station;
 import nextstep.station.domain.StationRepository;
 import nextstep.utils.DatabaseCleanup;
 import nextstep.utils.UnitTestFixture;
-import org.assertj.core.api.ThrowableAssert;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,7 +75,7 @@ public class PathServiceTest {
         Station 구간에없는역 = stationRepository.save(Station.of(구간에없는역_ID, 구간에없는역_NAME));
 
         // when
-        ThrowableAssert.ThrowingCallable actual = () -> pathService.findShortestPaths(구간에없는역.getId(), 교대역.getId(), DISTANCE.name());
+        ThrowingCallable actual = () -> pathService.findShortestPaths(구간에없는역.getId(), 교대역.getId(), DISTANCE.name());
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class);
@@ -90,7 +88,7 @@ public class PathServiceTest {
         Station 구간에없는역 = stationRepository.save(Station.of(구간에없는역_ID, 구간에없는역_NAME));
 
         // when
-        ThrowableAssert.ThrowingCallable actual = () -> pathService.findShortestPaths(강남역.getId(), 구간에없는역.getId(), DISTANCE.name());
+        ThrowingCallable actual = () -> pathService.findShortestPaths(강남역.getId(), 구간에없는역.getId(), DISTANCE.name());
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class);

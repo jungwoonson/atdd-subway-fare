@@ -1,6 +1,7 @@
 package nextstep.path.application;
 
 import nextstep.line.domain.SectionRepository;
+import nextstep.line.domain.Sections;
 import nextstep.path.application.dto.PathsResponse;
 import nextstep.fare.domain.Fare;
 import nextstep.path.domain.PathType;
@@ -37,11 +38,15 @@ public class PathService {
 
     private PathsResponse createPathsResponse(ShortestPath shortestPath, Station start, Station end) {
         int distance = shortestPath.getDistance(start, end);
+        Fare fareFromDistance = Fare.from(distance);
+
+        Sections sections = Sections.from(shortestPath.getUsedSections(start, end));
+        Fare fare = fareFromDistance.addMostExpensiveFare(sections.getFares());
 
         return PathsResponse.builder()
                 .distance(distance)
                 .duration(shortestPath.getDuration(start, end))
-                .fare(Fare.from(distance))
+                .fare(fare)
                 .stations(createStationResponses(shortestPath.getStations(start, end)))
                 .build();
     }

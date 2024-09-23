@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static nextstep.utils.UnitTestFixture.*;
@@ -150,5 +151,18 @@ public class ShortestDurationPathTest {
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class);
+    }
+
+    @DisplayName("사용된 구간 조회 함수는, 중복되지 않는 사용된 구간을 반환한다.")
+    @Test
+    void getUsedSectionsTest() {
+        // given
+        ShortestDurationPath shortestDurationPath = ShortestDurationPath.from(연결된구간);
+
+        // when
+        Set<Section> actual =  shortestDurationPath.getUsedSections(강남역, 교대역);
+
+        // then
+        assertThat(actual).isEqualTo(Set.of(교대역_홍대역, 홍대역_강남역));
     }
 }

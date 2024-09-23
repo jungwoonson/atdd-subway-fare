@@ -1,5 +1,6 @@
 package nextstep.line.domain;
 
+import nextstep.fare.domain.Fare;
 import nextstep.line.application.exception.DuplicateStationException;
 import nextstep.line.application.exception.LastOneSectionException;
 import nextstep.station.domain.Station;
@@ -9,10 +10,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.OptionalInt;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Embeddable
@@ -30,6 +29,10 @@ public class Sections {
         sections = new ArrayList<>(List.of(section));
     }
 
+    private Sections(Set<Section> sections) {
+        this.sections = new ArrayList<>(sections);
+    }
+
     private Sections(Section startSection, Section secondSection) {
         startSection.changeToFirst();
         sections = new ArrayList<>(List.of(startSection, secondSection));
@@ -37,6 +40,10 @@ public class Sections {
 
     public static Sections from(Section section) {
         return new Sections(section);
+    }
+
+    public static Sections from(Set<Section> sections) {
+        return new Sections(sections);
     }
 
     public static Sections of(Section startSection, Section secondSection) {
@@ -201,6 +208,12 @@ public class Sections {
 
     private boolean hasLastOneSection() {
         return sections.size() == 1;
+    }
+
+    public List<Fare> getFares() {
+        return sections.stream()
+                .map(Section::getFare)
+                .collect(Collectors.toList());
     }
 
     @Override

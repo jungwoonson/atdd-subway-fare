@@ -10,6 +10,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -102,5 +104,41 @@ public class FareTest {
 
         // then
         assertThat(fare).isEqualTo(Fare.from(BASE_FARE));
+    }
+
+    @DisplayName("더하기 함수는, 주어진 요금중 가장 비싼 요금을 더해서 반환한다.")
+    @Test
+    void addMostExpensiveFareTest() {
+        // given
+        Fare fare = Fare.zero();
+        Long amount1 = 1000L;
+        Long amount2 = 2000L;
+        Long amount3 = 3000L;
+        List<Fare> fares = List.of(Fare.from(amount1), Fare.from(amount2), Fare.from(amount3));
+
+        // when
+        Fare actual = fare.addMostExpensiveFare(fares);
+
+        // then
+        assertThat(actual).isEqualTo(Fare.from(amount3));
+    }
+
+    @DisplayName("더하기 함수는, 주어진 요금을 더해서 반환한다.")
+    @CsvSource({
+            "0, 0, 0",
+            "0, 1, -1",
+            "1, 0, 1"
+    })
+    @ParameterizedTest
+    void compareToTest(Long amount1, Long amount2, int expected) {
+        // given
+        Fare fare1 = Fare.from(amount1);
+        Fare fare2 = Fare.from(amount2);
+
+        // when
+        int actual = fare1.compareTo(fare2);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
     }
 }

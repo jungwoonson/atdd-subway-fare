@@ -1,5 +1,6 @@
 package nextstep.line.domain;
 
+import nextstep.fare.domain.Fare;
 import nextstep.line.application.exception.NotLessThanExistingDistanceException;
 import nextstep.line.application.exception.NotLessThanExistingDurationException;
 import nextstep.station.domain.Station;
@@ -14,7 +15,7 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lineId", referencedColumnName = "id")
+    @JoinColumn(name = "lineId", referencedColumnName = "id", nullable = false)
     private Line line;
     @ManyToOne
     @JoinColumn(name = "upStationId", referencedColumnName = "id")
@@ -113,6 +114,10 @@ public class Section {
 
     public String getDownStationName() {
         return downStation.getName();
+    }
+
+    public Fare getFare() {
+        return line.getFare();
     }
 
     public Long getId() {

@@ -1,9 +1,10 @@
 package nextstep.fare.domain;
 
 import javax.persistence.Column;
+import java.util.List;
 import java.util.Objects;
 
-public class Fare {
+public class Fare implements Comparable<Fare> {
 
     private static final Long BASE_FARE = 1250L;
     private static final Long ADDITIONAL_FARE = 100L;
@@ -39,15 +40,15 @@ public class Fare {
         return new Fare(fare);
     }
 
+    public static Fare from(final int distance) {
+        validateDistance(distance);
+        return new Fare(calculateFare(distance));
+    }
+
     private static void validateFare(final Long fare) {
         if (fare < ZERO_FARE) {
             throw new LessThanZeroFareException(fare);
         }
-    }
-
-    public static Fare from(final int distance) {
-        validateDistance(distance);
-        return new Fare(calculateFare(distance));
     }
 
     private static void validateDistance(final int distance) {
@@ -81,8 +82,20 @@ public class Fare {
         return ADDITIONAL_FARE + (additionalDistance / fareInterval) * ADDITIONAL_FARE;
     }
 
+    public Fare addMostExpensiveFare(final List<Fare> fares) {
+        Fare mostExpensive = fares.stream()
+                .max(Fare::compareTo)
+                .orElse(zero());
+        return new Fare(this.fare + mostExpensive.getFare());
+    }
+
     public Long getFare() {
         return fare;
+    }
+
+    @Override
+    public int compareTo(Fare o) {
+        return fare.compareTo(o.fare);
     }
 
     @Override
