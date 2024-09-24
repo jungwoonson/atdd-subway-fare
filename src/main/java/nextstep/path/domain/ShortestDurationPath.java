@@ -6,8 +6,6 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ShortestDurationPath extends ShortestPath {
 
@@ -44,13 +42,5 @@ public class ShortestDurationPath extends ShortestPath {
                 .stream()
                 .mapToInt(edge -> getSectionByEdge(edge).getDistance())
                 .sum();
-    }
-
-    @Override
-    public Set<Section> getUsedSections(Station start, Station end) {
-        return findShortestPath(start, end)
-                .getEdgeList().stream()
-                .map(this::getSectionByEdge)
-                .collect(Collectors.toSet());
     }
 }

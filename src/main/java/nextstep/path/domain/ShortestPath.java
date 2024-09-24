@@ -13,6 +13,7 @@ import org.jgrapht.graph.WeightedMultigraph;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class ShortestPath {
 
@@ -74,9 +75,15 @@ public abstract class ShortestPath {
                 .orElseThrow(() -> new NotAddedStationsToPathsException("station_id " + station_id));
     }
 
+    public Set<Section> getUsedSections(Station start, Station end) {
+        return findShortestPath(start, end)
+                .getEdgeList()
+                .stream()
+                .map(this::getSectionByEdge)
+                .collect(Collectors.toSet());
+    }
+
     public abstract int getDistance(Station start, Station end);
 
     public abstract int getDuration(Station start, Station end);
-
-    public abstract Set<Section> getUsedSections(Station start, Station end);
 }
