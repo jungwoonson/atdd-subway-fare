@@ -31,13 +31,13 @@ public class ShortestDurationPath extends ShortestPath {
     @Override
     public int getDuration(Station start, Station end) {
         validateContains(start, end);
-        return (int) findShortestPath(start, end).getWeight();
+        return (int) calculateShortestPath(start, end).getWeight();
     }
 
     @Override
     public int getDistance(Station start, Station end) {
         validateContains(start, end);
-        return findShortestPath(start, end)
+        return calculateShortestPath(start, end)
                 .getEdgeList()
                 .stream()
                 .mapToInt(edge -> getSectionByEdge(edge).getDistance())
