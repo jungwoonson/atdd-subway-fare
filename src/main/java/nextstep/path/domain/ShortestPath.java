@@ -25,9 +25,20 @@ public abstract class ShortestPath {
     protected List<Section> sections;
     protected WeightedMultigraph<Station, DefaultWeightedEdge> graph;
 
-    protected ShortestPath(List<Section> sections, WeightedMultigraph<Station, DefaultWeightedEdge> graph) {
+    protected ShortestPath(List<Section> sections) {
         this.sections = sections;
-        this.graph = graph;
+        this.graph = createGraph(sections);
+    }
+
+    protected WeightedMultigraph<Station, DefaultWeightedEdge> createGraph(List<Section> sections) {
+        WeightedMultigraph<Station, DefaultWeightedEdge> graph = new WeightedMultigraph<>(DefaultWeightedEdge.class);
+        sections.forEach(section -> {
+            graph.addVertex(section.getUpStation());
+            graph.addVertex(section.getDownStation());
+            DefaultWeightedEdge edge = graph.addEdge(section.getUpStation(), section.getDownStation());
+            graph.setEdgeWeight(edge, getWeight(section));
+        });
+        return graph;
     }
 
     public List<Station> getStations(Station start, Station end) {
@@ -95,6 +106,8 @@ public abstract class ShortestPath {
             throw new NotAddedEndToPathsException(end.getName());
         }
     }
+
+    protected abstract int getWeight(Section section);
 
     public abstract int getDistance(Station start, Station end);
 
