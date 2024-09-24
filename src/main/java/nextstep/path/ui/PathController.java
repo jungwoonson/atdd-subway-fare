@@ -1,5 +1,7 @@
 package nextstep.path.ui;
 
+import nextstep.authentication.domain.LoginMember;
+import nextstep.authentication.ui.AuthenticationPrincipal;
 import nextstep.path.application.PathService;
 import nextstep.path.application.dto.PathsResponse;
 import nextstep.path.ui.exception.SameSourceAndTargetException;
@@ -18,7 +20,7 @@ public class PathController {
     }
 
     @GetMapping("/paths")
-    public ResponseEntity<PathsResponse> findShortestPath(@RequestParam("source") Long source, @RequestParam("target") Long target, @RequestParam("type") String type) {
+    public ResponseEntity<PathsResponse> findShortestPath(@AuthenticationPrincipal(loginRequired = false) LoginMember loginMember, @RequestParam("source") Long source, @RequestParam("target") Long target, @RequestParam("type") String type) {
         if (source.equals(target)) {
             throw new SameSourceAndTargetException();
         }
