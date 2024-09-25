@@ -12,6 +12,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private static final String ID = "id";
+    private static final String AGE = "age";
 
     @Value("${security.jwt.token.secret-key}")
     private String secretKey;
@@ -45,5 +46,13 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody()
                 .get(ID, Long.class);
+    }
+
+    public Integer getAge(String token) {
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody()
+                .get(AGE, Integer.class);
     }
 }

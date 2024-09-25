@@ -28,6 +28,6 @@ public class MemberAuthenticationService implements AuthenticationService {
     @Transactional
     public LoginMember lookUpOrCreateMember(GithubProfileResponse profileResponse) {
         Member member = memberService.lookUpOrCreateMember(profileResponse);
-        return new LoginMember(member.getEmail(), member.getId());
+        return new LoginMember(member.getEmail(), member.getId(), member.getAge());
     }
 }
