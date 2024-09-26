@@ -25,6 +25,8 @@ public class UnitTestFixture {
     public static final Station 홍대역 = Station.of(4L, "홍대역");
     public static final Line 신분당선 = 신분당선(강남역, 양재역);
     public static final long ZERO_FARE = 0L;
+    public static final long FARE_250 = 250L;
+    public static final long FARE_350 = 350L;
 
     public static final Section 강남역_양재역 = Section.builder()
             .line(신분당선)
@@ -65,6 +67,7 @@ public class UnitTestFixture {
                 .downStation(downStation)
                 .distance(DEFAULT_DISTANCE)
                 .duration(DEFAULT_DURATION)
+                .fare(ZERO_FARE)
                 .build();
     }
 
@@ -76,6 +79,7 @@ public class UnitTestFixture {
                 .downStation(downStation)
                 .distance(DEFAULT_DISTANCE)
                 .duration(DEFAULT_DURATION)
+                .fare(FARE_250)
                 .build();
     }
 
@@ -87,6 +91,7 @@ public class UnitTestFixture {
                 .downStation(downStation)
                 .distance(DISTANCE_6)
                 .duration(DEFAULT_DURATION)
+                .fare(FARE_350)
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package nextstep.path.application;
 
+import nextstep.fare.domain.FarePolicy;
 import nextstep.line.domain.SectionRepository;
 import nextstep.line.domain.Sections;
 import nextstep.path.application.dto.PathsResponse;
@@ -38,7 +39,8 @@ public class PathService {
 
     private PathsResponse createPathsResponse(ShortestPath shortestPath, Station start, Station end) {
         int distance = shortestPath.getDistance(start, end);
-        Fare fareFromDistance = Fare.from(distance);
+        FarePolicy farePolicy = new FarePolicy();
+        Fare fareFromDistance = farePolicy.calculateFare(distance, new Sections(), 0);
 
         Sections sections = Sections.from(shortestPath.getUsedSections(start, end));
         Fare fare = fareFromDistance.addMostExpensiveFare(sections.getFares());

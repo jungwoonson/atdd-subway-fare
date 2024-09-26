@@ -29,8 +29,8 @@ public class Sections {
         sections = new ArrayList<>(List.of(section));
     }
 
-    private Sections(Set<Section> sections) {
-        this.sections = new ArrayList<>(sections);
+    private Sections(List<Section> sections) {
+        this.sections = sections;
     }
 
     private Sections(Section startSection, Section secondSection) {
@@ -43,7 +43,15 @@ public class Sections {
     }
 
     public static Sections from(Set<Section> sections) {
-        return new Sections(sections);
+        return new Sections(new ArrayList<>(sections));
+    }
+
+    public static Sections from(List<Sections> sections) {
+        Set<Section> sectionSet = new HashSet<>();
+        for (Sections section : sections) {
+            sectionSet.addAll(section.sections);
+        }
+        return from(sectionSet);
     }
 
     public static Sections of(Section startSection, Section secondSection) {
