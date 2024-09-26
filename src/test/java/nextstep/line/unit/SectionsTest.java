@@ -78,20 +78,6 @@ public class SectionsTest {
         assertThat(sections).isEqualTo(expected);
     }
 
-    @DisplayName("요금들 조회 함수는, 구간의 노선 요금들을 반환한다.")
-    @Test
-    void getFaresTest() {
-        // given
-        Sections sections = Sections.of(강남역_양재역(), 양재역_교대역());
-        List<Fare> expected = List.of(신분당선.getFare(), 신분당선.getFare());
-
-        // when
-        List<Fare> actual = sections.getFares();
-
-        // then
-        assertThat(actual).isEqualTo(expected);
-    }
-
     private static Stream<Arguments> deleteSectionParameters() {
         return Stream.of(
                 Arguments.of(강남역, Sections.from(양재역_교대역())),

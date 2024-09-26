@@ -1,9 +1,12 @@
 package nextstep.path.application.dto;
 
 import nextstep.fare.domain.Fare;
+import nextstep.path.domain.ShortestPath;
 import nextstep.station.application.dto.StationResponse;
+import nextstep.station.domain.Station;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PathsResponse {
     private int distance;
@@ -14,11 +17,26 @@ public class PathsResponse {
     public PathsResponse() {
     }
 
-    private PathsResponse(int distance, int duration, long fare, List<StationResponse> stations) {
-        this.distance = distance;
-        this.duration = duration;
-        this.fare = fare;
-        this.stations = stations;
+    private PathsResponse(Builder builder) {
+        this.distance = builder.distance;
+        this.duration = builder.duration;
+        this.fare = builder.fare;
+        this.stations = builder.stations;
+    }
+
+    public static PathsResponse of(ShortestPath shortestPath, Station start, Station end, Fare fare) {
+        return PathsResponse.builder()
+                .distance(shortestPath.getDistance(start, end))
+                .duration(shortestPath.getDuration(start, end))
+                .fare(fare)
+                .stations(createStationResponse(shortestPath.getStations(start, end)))
+                .build();
+    }
+
+    private static List<StationResponse> createStationResponse(List<Station> stations) {
+        return stations.stream()
+                .map(StationResponse::from)
+                .collect(Collectors.toList());
     }
 
     public List<StationResponse> getStations() {
@@ -84,7 +102,7 @@ public class PathsResponse {
         }
 
         public PathsResponse build() {
-            return new PathsResponse(distance, duration, fare, stations);
+            return new PathsResponse(this);
         }
     }
 }

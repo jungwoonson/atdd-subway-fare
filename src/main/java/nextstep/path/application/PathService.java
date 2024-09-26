@@ -1,10 +1,11 @@
 package nextstep.path.application;
 
-import nextstep.fare.domain.FarePolicy;
-import nextstep.line.domain.SectionRepository;
-import nextstep.line.domain.Sections;
-import nextstep.path.application.dto.PathsResponse;
 import nextstep.fare.domain.Fare;
+import nextstep.fare.domain.FarePolicy;
+import nextstep.line.domain.Section;
+import nextstep.line.domain.SectionRepository;
+import nextstep.path.application.dto.PathsRequest;
+import nextstep.path.application.dto.PathsResponse;
 import nextstep.path.domain.PathType;
 import nextstep.path.domain.ShortestPath;
 import nextstep.path.ui.exception.SameSourceAndTargetException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static nextstep.path.domain.PathType.DISTANCE;
@@ -28,33 +30,20 @@ public class PathService {
         this.sectionRepository = sectionRepository;
     }
 
-    public PathsResponse findShortestPaths(Long source, Long target, String type) {
-        ShortestPath shortestPath = createShortestPath(source, target, PathType.lookUp(type));
+    public PathsResponse findShortestPaths(PathsRequest pathsRequest) {
+        ShortestPath shortestPath = createShortestPath(pathsRequest);
 
-        Station start = shortestPath.lookUpStation(source);
-        Station end = shortestPath.lookUpStation(target);
+        Station start = shortestPath.lookUpStation(pathsRequest.getSource());
+        Station end = shortestPath.lookUpStation(pathsRequest.getTarget());
 
-        return createPathsResponse(shortestPath, start, end);
-    }
-
-    private PathsResponse createPathsResponse(ShortestPath shortestPath, Station start, Station end) {
-        int distance = shortestPath.getDistance(start, end);
         FarePolicy farePolicy = new FarePolicy();
-        Fare fareFromDistance = farePolicy.calculateFare(distance, new Sections(), 0);
-
-        Sections sections = Sections.from(shortestPath.getUsedSections(start, end));
-        Fare fare = fareFromDistance.addMostExpensiveFare(sections.getFares());
-
-        return PathsResponse.builder()
-                .distance(distance)
-                .duration(shortestPath.getDuration(start, end))
-                .fare(fare)
-                .stations(createStationResponses(shortestPath.getStations(start, end)))
-                .build();
+        Set<Section> usedSections = shortestPath.getUsedSections(start, end);
+        Fare fare = farePolicy.calculateFare(shortestPath.getDistance(start, end), usedSections, pathsRequest.getAge());
+        return PathsResponse.of(shortestPath, start, end, fare);
     }
 
     public void validatePaths(Long source, Long target) {
-        ShortestPath shortestPath = createShortestPath(source, target, DISTANCE);
+        ShortestPath shortestPath = createShortestPath(source, target);
 
         Station start = shortestPath.lookUpStation(source);
         Station end = shortestPath.lookUpStation(target);
@@ -62,8 +51,14 @@ public class PathService {
         shortestPath.validateConnected(start, end);
     }
 
-    private ShortestPath createShortestPath(Long source, Long target, PathType pathType) {
+    private ShortestPath createShortestPath(Long source, Long target) {
         validateSameSourceAndTarget(source, target);
+        return DISTANCE.createShortestPath(sectionRepository.findAll());
+    }
+
+    private ShortestPath createShortestPath(PathsRequest pathsRequest) {
+        validateSameSourceAndTarget(pathsRequest.getSource(), pathsRequest.getTarget());
+        PathType pathType = PathType.lookUp(pathsRequest.getType());
         return pathType.createShortestPath(sectionRepository.findAll());
     }
 

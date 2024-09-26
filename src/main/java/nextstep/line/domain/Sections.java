@@ -1,6 +1,5 @@
 package nextstep.line.domain;
 
-import nextstep.fare.domain.Fare;
 import nextstep.line.application.exception.DuplicateStationException;
 import nextstep.line.application.exception.LastOneSectionException;
 import nextstep.station.domain.Station;
@@ -11,7 +10,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Embeddable
@@ -216,12 +214,6 @@ public class Sections {
 
     private boolean hasLastOneSection() {
         return sections.size() == 1;
-    }
-
-    public List<Fare> getFares() {
-        return sections.stream()
-                .map(Section::getFare)
-                .collect(Collectors.toList());
     }
 
     @Override

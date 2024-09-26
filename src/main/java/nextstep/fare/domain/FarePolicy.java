@@ -1,6 +1,8 @@
 package nextstep.fare.domain;
 
-import nextstep.line.domain.Sections;
+import nextstep.line.domain.Section;
+
+import java.util.Set;
 
 public class FarePolicy {
 
@@ -25,7 +27,7 @@ public class FarePolicy {
         return BASE_FARE;
     }
 
-    public Fare calculateFare(final Integer distance, final Sections sections, final Integer age) {
+    public Fare calculateFare(final Integer distance, final Set<Section> sections, final Integer age) {
         Fare distanceFare = calculateFareForDistance(distance);
         Fare sectionFare = calculateFareForSections(sections);
         Fare fare = distanceFare.add(sectionFare);
@@ -65,13 +67,12 @@ public class FarePolicy {
         return ADDITIONAL_FARE.add(ADDITIONAL_FARE.multiply(additionalDistance / fareInterval));
     }
 
-    private Fare calculateFareForSections(Sections sections) {
-        Long maxFare = sections.getFares()
-                .stream()
+    private Fare calculateFareForSections(Set<Section> sections) {
+
+        return sections.stream()
+                .map(Section::getFare)
                 .max(Fare::compareTo)
-                .orElse(Fare.zero())
-                .getFare();
-        return Fare.from(maxFare);
+                .orElse(Fare.zero());
     }
 
     private Fare discount(final Fare fare, final Integer age) {

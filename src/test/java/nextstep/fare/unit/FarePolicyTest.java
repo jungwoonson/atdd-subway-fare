@@ -3,15 +3,17 @@ package nextstep.fare.unit;
 import nextstep.fare.domain.Fare;
 import nextstep.fare.domain.FarePolicy;
 import nextstep.line.domain.Line;
+import nextstep.line.domain.Section;
 import nextstep.line.domain.Sections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static nextstep.utils.UnitTestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FarePolicyTest {
 
     private static final Long BASE_FARE = 1250L;
-    private static final Sections EMPTY_SECTIONS = new Sections();
+    private static final Set<Section> EMPTY_SECTIONS = new HashSet<>();
     private static final Integer NONE_DISCOUNT_AGE = 19;
     private static final Integer BASE_DISTANCE = 1;
 
@@ -72,10 +74,26 @@ public class FarePolicyTest {
         Line 요금없는노선 = 신분당선(강남역, 양재역);
         Line 요금250노선 = 분당선(교대역, 홍대역);
         Line 요금350노선 = 중앙선(홍대역, 양재역);
-        Sections 요금있는구간 = 요금없는노선.getSections();
-        Sections 요금250구간 = 요금250노선.getSections();
-        Sections 요금350구간 = 요금350노선.getSections();
-        Sections sections = Sections.from(List.of(요금있는구간, 요금250구간, 요금350구간));
+        Section 요금없는구간 = Section.builder()
+                .line(요금없는노선)
+                .upStation(강남역)
+                .downStation(양재역)
+                .distance(BASE_DISTANCE)
+                .build();
+        Section 요금250구간 = Section.builder()
+                .line(요금250노선)
+                .upStation(교대역)
+                .downStation(홍대역)
+                .distance(BASE_DISTANCE)
+                .build();
+        Section 요금350구간 = Section.builder()
+                .line(요금350노선)
+                .upStation(홍대역)
+                .downStation(양재역)
+                .distance(BASE_DISTANCE)
+                .build();
+        Set<Section> sections = Set.of(요금없는구간, 요금250구간, 요금350구간);
+
         Fare baseFare = FarePolicy.baseFare();
 
         assertCalculateFare(BASE_DISTANCE, sections, NONE_DISCOUNT_AGE, baseFare.add(Fare.from(350L)));
@@ -96,7 +114,7 @@ public class FarePolicyTest {
         assertCalculateFare(BASE_DISTANCE, EMPTY_SECTIONS, age, Fare.from(fare));
     }
 
-    private void assertCalculateFare(Integer distance, Sections sections, Integer age, Fare expected) {
+    private void assertCalculateFare(Integer distance, Set<Section> sections, Integer age, Fare expected) {
         // given
         FarePolicy farePolicy = new FarePolicy();
 

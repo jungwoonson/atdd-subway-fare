@@ -2,6 +2,7 @@ package nextstep.path.unit;
 
 import nextstep.line.domain.LineRepository;
 import nextstep.path.application.PathService;
+import nextstep.path.application.dto.PathsRequest;
 import nextstep.path.application.dto.PathsResponse;
 import nextstep.path.application.exception.NotAddedStationsToPathsException;
 import nextstep.station.domain.Station;
@@ -60,8 +61,16 @@ public class PathServiceTest {
     @DisplayName("최단경로 조회 함수는, 출발역과 도착역을 입력하면 최단 경로 지하철 역 목록과 총 거리를 반환한다.")
     @Test
     void findShortestPathsTest() {
+        // given
+        PathsRequest pathsRequest = PathsRequest.builder()
+                .source(강남역.getId())
+                .target(교대역.getId())
+                .type(DISTANCE.name())
+                .age(0)
+                .build();
+
         // when
-        PathsResponse pathsResponse = pathService.findShortestPaths(강남역.getId(), 교대역.getId(), DISTANCE.name());
+        PathsResponse pathsResponse = pathService.findShortestPaths(pathsRequest);
 
         // then
         assertThat(pathsResponse.getStations()).isEqualTo(createStationResponse(강남역, 홍대역, 교대역));
@@ -74,8 +83,15 @@ public class PathServiceTest {
         // given
         Station 구간에없는역 = stationRepository.save(Station.of(구간에없는역_ID, 구간에없는역_NAME));
 
+        PathsRequest pathsRequest = PathsRequest.builder()
+                .source(구간에없는역.getId())
+                .target(교대역.getId())
+                .type(DISTANCE.name())
+                .age(0)
+                .build();
+
         // when
-        ThrowingCallable actual = () -> pathService.findShortestPaths(구간에없는역.getId(), 교대역.getId(), DISTANCE.name());
+        ThrowingCallable actual = () -> pathService.findShortestPaths(pathsRequest);
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class);
@@ -87,8 +103,15 @@ public class PathServiceTest {
         // given
         Station 구간에없는역 = stationRepository.save(Station.of(구간에없는역_ID, 구간에없는역_NAME));
 
+        PathsRequest pathsRequest = PathsRequest.builder()
+                .source(강남역.getId())
+                .target(구간에없는역.getId())
+                .type(DISTANCE.name())
+                .age(0)
+                .build();
+
         // when
-        ThrowingCallable actual = () -> pathService.findShortestPaths(강남역.getId(), 구간에없는역.getId(), DISTANCE.name());
+        ThrowingCallable actual = () -> pathService.findShortestPaths(pathsRequest);
 
         // then
         assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class);
