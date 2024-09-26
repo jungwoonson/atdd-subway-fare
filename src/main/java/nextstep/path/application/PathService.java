@@ -1,8 +1,5 @@
 package nextstep.path.application;
 
-import nextstep.fare.domain.Fare;
-import nextstep.fare.domain.FarePolicy;
-import nextstep.line.domain.Section;
 import nextstep.line.domain.SectionRepository;
 import nextstep.path.application.dto.PathsRequest;
 import nextstep.path.application.dto.PathsResponse;
@@ -15,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static nextstep.path.domain.PathType.DISTANCE;
@@ -36,10 +32,7 @@ public class PathService {
         Station start = shortestPath.lookUpStation(pathsRequest.getSource());
         Station end = shortestPath.lookUpStation(pathsRequest.getTarget());
 
-        FarePolicy farePolicy = new FarePolicy();
-        Set<Section> usedSections = shortestPath.getUsedSections(start, end);
-        Fare fare = farePolicy.calculateFare(shortestPath.getDistance(start, end), usedSections, pathsRequest.getAge());
-        return PathsResponse.of(shortestPath, start, end, fare);
+        return PathsResponse.of(shortestPath.findShortestPathInfo(start, end, pathsRequest.getAge()));
     }
 
     public void validatePaths(Long source, Long target) {

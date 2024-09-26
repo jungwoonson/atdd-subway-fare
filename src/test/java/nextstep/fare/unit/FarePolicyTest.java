@@ -116,10 +116,10 @@ public class FarePolicyTest {
 
     private void assertCalculateFare(Integer distance, Set<Section> sections, Integer age, Fare expected) {
         // given
-        FarePolicy farePolicy = new FarePolicy();
+        FarePolicy farePolicy = FarePolicy.of(distance, sections, age);
 
         // when
-        Fare fare = farePolicy.calculateFare(distance, sections, age);
+        Fare fare = farePolicy.calculateFare();
 
         // then
         assertThat(fare).isEqualTo(expected);

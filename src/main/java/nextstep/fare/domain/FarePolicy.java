@@ -23,42 +23,56 @@ public class FarePolicy {
     public static final int MAX_CHILD_AGE = 12;
     public static final int MAX_YOUTH_AGE = 18;
 
+    private final Integer distance;
+    private final Set<Section> sections;
+    private final Integer age;
+
+    private FarePolicy (final Integer distance, final Set<Section> sections, final Integer age) {
+        this.distance = distance;
+        this.sections = sections;
+        this.age = age;
+    }
+
+    public static FarePolicy of(final Integer distance, final Set<Section> sections, final Integer age) {
+        validateDistance(distance);
+        return new FarePolicy(distance, sections, age);
+    }
+
     public static Fare baseFare() {
         return BASE_FARE;
     }
 
-    public Fare calculateFare(final Integer distance, final Set<Section> sections, final Integer age) {
-        Fare distanceFare = calculateFareForDistance(distance);
-        Fare sectionFare = calculateFareForSections(sections);
+    public Fare calculateFare() {
+        Fare distanceFare = calculateFareForDistance();
+        Fare sectionFare = calculateFareForSections();
         Fare fare = distanceFare.add(sectionFare);
-        return discount(fare, age);
+        return discount(fare);
     }
 
-    private Fare calculateFareForDistance(Integer distance) {
-        validateDistance(distance);
+    private Fare calculateFareForDistance() {
         if (distance <= BASE_FARE_DISTANCE_LIMIT) {
             return baseFare();
         }
         if (distance <= EXTENDED_FARE_DISTANCE_LIMIT) {
-            return calculateAdditionalFareForExtendedDistance(distance);
+            return calculateAdditionalFareForExtendedDistance();
         }
-        return calculateAdditionalFareForLongDistance(distance);
+        return calculateAdditionalFareForLongDistance();
     }
 
-    private void validateDistance(final int distance) {
+    private static void validateDistance(final Integer distance) {
         if (distance < MINIMUM_DISTANCE) {
             throw new LessThanMinimumDistanceException(MINIMUM_DISTANCE, distance);
         }
     }
 
-    private Fare calculateAdditionalFareForExtendedDistance(final int distance) {
+    private Fare calculateAdditionalFareForExtendedDistance() {
         int additionalDistance = Math.min(distance, EXTENDED_FARE_DISTANCE_LIMIT) - BASE_FARE_DISTANCE_LIMIT - FARE_ADJUSTMENT;
         return BASE_FARE.add(calculateAdditionalFare(additionalDistance, EXTENDED_FARE_INTERVAL));
     }
 
-    private Fare calculateAdditionalFareForLongDistance(final int distance) {
+    private Fare calculateAdditionalFareForLongDistance() {
         int additionalDistance = distance - EXTENDED_FARE_DISTANCE_LIMIT - FARE_ADJUSTMENT;
-        Fare fareForExtendedDistance = calculateAdditionalFareForExtendedDistance(distance);
+        Fare fareForExtendedDistance = calculateAdditionalFareForExtendedDistance();
         Fare additionalFare = calculateAdditionalFare(additionalDistance, ADDITIONAL_FARE_INTERVAL);
         return fareForExtendedDistance.add(additionalFare);
     }
@@ -67,15 +81,14 @@ public class FarePolicy {
         return ADDITIONAL_FARE.add(ADDITIONAL_FARE.multiply(additionalDistance / fareInterval));
     }
 
-    private Fare calculateFareForSections(Set<Section> sections) {
-
+    private Fare calculateFareForSections() {
         return sections.stream()
                 .map(Section::getFare)
                 .max(Fare::compareTo)
                 .orElse(Fare.zero());
     }
 
-    private Fare discount(final Fare fare, final Integer age) {
+    private Fare discount(final Fare fare) {
         if (age > MAX_YOUTH_AGE || age < MIN_CHILD_AGE) {
             return fare;
         }

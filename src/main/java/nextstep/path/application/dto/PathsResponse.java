@@ -24,12 +24,12 @@ public class PathsResponse {
         this.stations = builder.stations;
     }
 
-    public static PathsResponse of(ShortestPath shortestPath, Station start, Station end, Fare fare) {
+    public static PathsResponse of(PathInformation pathInformation) {
         return PathsResponse.builder()
-                .distance(shortestPath.getDistance(start, end))
-                .duration(shortestPath.getDuration(start, end))
-                .fare(fare)
-                .stations(createStationResponse(shortestPath.getStations(start, end)))
+                .distance(pathInformation.getDistance())
+                .duration(pathInformation.getDuration())
+                .fare(pathInformation.getFare())
+                .stations(createStationResponse(pathInformation.getStations()))
                 .build();
     }
 
