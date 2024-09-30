@@ -7,8 +7,8 @@ import java.util.List;
 
 public class ShortestDistancePath extends ShortestPath {
 
-    public ShortestDistancePath(List<Section> sections) {
-        super(sections);
+    public ShortestDistancePath(List<Section> sections, PathPoint pathPoint) {
+        super(sections, pathPoint);
     }
 
     @Override

@@ -24,12 +24,15 @@ public abstract class ShortestPath {
     private static final String CACHE_KEY_FORMAT = "%s=>%s";
     private final Map<String, GraphPath<Station, DefaultWeightedEdge>> pathCache = new HashMap<>();
 
+    protected PathPoint pathPoint;
+
     protected List<Section> sections;
     protected WeightedMultigraph<Station, DefaultWeightedEdge> graph;
 
-    protected ShortestPath(List<Section> sections) {
+    protected ShortestPath(List<Section> sections, PathPoint pathPoint) {
         this.sections = sections;
         this.graph = createGraph(sections);
+        this.pathPoint = pathPoint;
     }
 
     protected WeightedMultigraph<Station, DefaultWeightedEdge> createGraph(List<Section> sections) {

@@ -3,6 +3,7 @@ package nextstep.path.unit;
 import nextstep.line.domain.Section;
 import nextstep.path.application.exception.NotAddedStationsToPathsException;
 import nextstep.path.application.exception.NotConnectedPathsException;
+import nextstep.path.domain.PathPoint;
 import nextstep.path.domain.ShortestDistancePath;
 import nextstep.station.domain.Station;
 import org.assertj.core.api.ThrowableAssert.*;
@@ -23,8 +24,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("최단 거리 경로 테스트")
 public class ShortestDistancePathTest {
 
-    private static final ShortestDistancePath 연결된경로 = new ShortestDistancePath(연결된구간);
-    private static final ShortestDistancePath 열결되지않은경로 = new ShortestDistancePath(List.of(강남역_양재역, 교대역_홍대역));
+    private static final ShortestDistancePath 연결된경로;
+    private static final ShortestDistancePath 열결되지않은경로;
+
+    static {
+        PathPoint pathPoint = PathPoint.of(강남역, 교대역);
+        연결된경로 = new ShortestDistancePath(연결된구간, pathPoint);
+        열결되지않은경로 = new ShortestDistancePath(List.of(강남역_양재역, 교대역_홍대역), pathPoint);
+    }
+
 
     @DisplayName("지하철역 조회 함수는, 가장 짧은 지하철 역 목록을 반환한다.")
     @Test

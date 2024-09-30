@@ -1,6 +1,7 @@
 package nextstep.path.domain;
 
 import nextstep.path.ui.exception.SameSourceAndTargetException;
+import nextstep.station.domain.Station;
 
 import java.util.Objects;
 
@@ -15,6 +16,13 @@ public class PathPoint {
     }
 
     public static PathPoint of(Long sourceId, Long targetId) {
+        validate(sourceId, targetId);
+        return new PathPoint(sourceId, targetId);
+    }
+
+    public static PathPoint of(Station source, Station target) {
+        Long sourceId = source.getId();
+        Long targetId = target.getId();
         validate(sourceId, targetId);
         return new PathPoint(sourceId, targetId);
     }

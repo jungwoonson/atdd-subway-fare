@@ -46,14 +46,14 @@ public class PathService {
     }
 
     private ShortestPath createShortestPath(Long source, Long target) {
-        PathPoint.of(source, target);
-        return DISTANCE.createShortestPath(sectionRepository.findAll());
+        PathPoint pathPoint = PathPoint.of(source, target);
+        return DISTANCE.createShortestPath(sectionRepository.findAll(), pathPoint);
     }
 
     private ShortestPath createShortestPath(PathsRequest pathsRequest) {
-        PathPoint.of(pathsRequest.getSource(), pathsRequest.getTarget());
+        PathPoint pathPoint = PathPoint.of(pathsRequest.getSource(), pathsRequest.getTarget());
         PathType pathType = PathType.lookUp(pathsRequest.getType());
-        return pathType.createShortestPath(sectionRepository.findAll());
+        return pathType.createShortestPath(sectionRepository.findAll(), pathPoint);
     }
 
     private List<StationResponse> createStationResponses(List<Station> stations) {

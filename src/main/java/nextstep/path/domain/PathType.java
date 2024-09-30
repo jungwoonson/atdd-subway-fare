@@ -9,14 +9,14 @@ public enum PathType {
 
     DISTANCE{
         @Override
-        public ShortestPath createShortestPath(List<Section> sections) {
-            return new ShortestDistancePath(sections);
+        public ShortestPath createShortestPath(List<Section> sections, PathPoint pathPoint) {
+            return new ShortestDistancePath(sections, pathPoint);
         }
     },
     DURATION{
         @Override
-        public ShortestPath createShortestPath(List<Section> sections) {
-            return new ShortestDurationPath(sections);
+        public ShortestPath createShortestPath(List<Section> sections, PathPoint pathPoint) {
+            return new ShortestDurationPath(sections, pathPoint);
         }
     };
 
@@ -28,5 +28,5 @@ public enum PathType {
         }
     }
 
-    public abstract ShortestPath createShortestPath(List<Section> sections);
+    public abstract ShortestPath createShortestPath(List<Section> sections, PathPoint pathPoint);
 }
