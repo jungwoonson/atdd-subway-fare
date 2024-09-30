@@ -3,6 +3,7 @@ package nextstep.path.application;
 import nextstep.line.domain.SectionRepository;
 import nextstep.path.application.dto.PathsRequest;
 import nextstep.path.application.dto.PathsResponse;
+import nextstep.path.domain.PathPoint;
 import nextstep.path.domain.PathType;
 import nextstep.path.domain.ShortestPath;
 import nextstep.path.ui.exception.SameSourceAndTargetException;
@@ -45,20 +46,14 @@ public class PathService {
     }
 
     private ShortestPath createShortestPath(Long source, Long target) {
-        validateSameSourceAndTarget(source, target);
+        PathPoint.of(source, target);
         return DISTANCE.createShortestPath(sectionRepository.findAll());
     }
 
     private ShortestPath createShortestPath(PathsRequest pathsRequest) {
-        validateSameSourceAndTarget(pathsRequest.getSource(), pathsRequest.getTarget());
+        PathPoint.of(pathsRequest.getSource(), pathsRequest.getTarget());
         PathType pathType = PathType.lookUp(pathsRequest.getType());
         return pathType.createShortestPath(sectionRepository.findAll());
-    }
-
-    private static void validateSameSourceAndTarget(Long source, Long target) {
-        if (source.equals(target)) {
-            throw new SameSourceAndTargetException();
-        }
     }
 
     private List<StationResponse> createStationResponses(List<Station> stations) {
