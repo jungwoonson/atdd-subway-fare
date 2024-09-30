@@ -4,7 +4,7 @@ import nextstep.fare.domain.Fare;
 import nextstep.fare.domain.FarePolicy;
 import nextstep.line.domain.Line;
 import nextstep.line.domain.Section;
-import nextstep.line.domain.Sections;
+import nextstep.path.domain.Path;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +12,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static nextstep.utils.UnitTestFixture.*;
@@ -116,7 +115,11 @@ public class FarePolicyTest {
 
     private void assertCalculateFare(Integer distance, Set<Section> sections, Integer age, Fare expected) {
         // given
-        FarePolicy farePolicy = FarePolicy.of(distance, sections, age);
+        Path path = Path.builder()
+                .distance(distance)
+                .sections(sections)
+                .build();
+        FarePolicy farePolicy = FarePolicy.of(path, age);
 
         // when
         Fare fare = farePolicy.calculateFare();

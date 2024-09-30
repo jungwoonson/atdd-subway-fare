@@ -1,8 +1,6 @@
 package nextstep.path.domain;
 
-import nextstep.fare.domain.FarePolicy;
 import nextstep.line.domain.Section;
-import nextstep.path.application.dto.PathInformation;
 import nextstep.path.application.exception.NotAddedEndToPathsException;
 import nextstep.path.application.exception.NotAddedStartToPathsException;
 import nextstep.path.application.exception.NotAddedStationsToPathsException;
@@ -42,14 +40,13 @@ public abstract class ShortestPath {
         return graph;
     }
 
-    public PathInformation find(Integer age) {
+    public Path find() {
         int distance = getDistance();
-        FarePolicy farePolicy = FarePolicy.of(distance, getUsedSections(), age);
-        return PathInformation.builder()
+        return Path.builder()
                 .distance(distance)
                 .duration(getDuration())
                 .stations(getStations())
-                .fare(farePolicy.calculateFare())
+                .sections(getUsedSections())
                 .build();
     }
 

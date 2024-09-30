@@ -1,22 +1,36 @@
 package nextstep.path.unit;
 
+import nextstep.path.domain.Path;
 import nextstep.path.domain.PathPoint;
 import nextstep.path.domain.ShortestDistancePath;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static nextstep.utils.UnitTestFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("최단 거리 경로 테스트")
 public class ShortestDistancePathTest {
 
-    private static final ShortestDistancePath 연결된경로;
-    private static final ShortestDistancePath 열결되지않은경로;
+    @DisplayName("경로 조회 함수는, 주어진 출발역, 도착역의 최단 거리 경로를 반환한다.")
+    @Test
+    void findTest() {
+        // given
+        ShortestDistancePath 연결된경로 = new ShortestDistancePath(연결된구간, PathPoint.of(강남역, 교대역));
+        Path expected = Path.builder()
+                .distance(DISTANCE_6 + DISTANCE_7)
+                .duration(DURATION_2 + DEFAULT_DURATION)
+                .stations(List.of(강남역, 홍대역, 교대역))
+                .sections(Set.of(교대역_홍대역, 홍대역_강남역))
+                .build();
 
-    static {
-        PathPoint pathPoint = PathPoint.of(강남역, 교대역);
-        연결된경로 = new ShortestDistancePath(연결된구간, pathPoint);
-        열결되지않은경로 = new ShortestDistancePath(List.of(강남역_양재역, 교대역_홍대역), pathPoint);
+        // when
+        Path actual = 연결된경로.find();
+
+        // then
+        assertThat(actual).isEqualTo(expected);
     }
 }

@@ -1,8 +1,10 @@
 package nextstep.path.application;
 
+import nextstep.fare.domain.FarePolicy;
 import nextstep.line.domain.SectionRepository;
 import nextstep.path.application.dto.PathsRequest;
 import nextstep.path.application.dto.PathsResponse;
+import nextstep.path.domain.Path;
 import nextstep.path.domain.PathPoint;
 import nextstep.path.domain.PathType;
 import nextstep.path.domain.ShortestPath;
@@ -28,7 +30,9 @@ public class PathService {
 
     public PathsResponse findShortestPaths(PathsRequest pathsRequest) {
         ShortestPath shortestPath = createShortestPath(pathsRequest);
-        return PathsResponse.of(shortestPath.find(pathsRequest.getAge()));
+        Path path = shortestPath.find();
+        FarePolicy farePolicy = FarePolicy.of(path, pathsRequest.getAge());
+        return PathsResponse.of(path, farePolicy.calculateFare());
     }
 
     public void validatePaths(Long source, Long target) {

@@ -1,7 +1,7 @@
 package nextstep.path.application.dto;
 
 import nextstep.fare.domain.Fare;
-import nextstep.path.domain.ShortestPath;
+import nextstep.path.domain.Path;
 import nextstep.station.application.dto.StationResponse;
 import nextstep.station.domain.Station;
 
@@ -24,12 +24,12 @@ public class PathsResponse {
         this.stations = builder.stations;
     }
 
-    public static PathsResponse of(PathInformation pathInformation) {
+    public static PathsResponse of(Path path, Fare fare) {
         return PathsResponse.builder()
-                .distance(pathInformation.getDistance())
-                .duration(pathInformation.getDuration())
-                .fare(pathInformation.getFare())
-                .stations(createStationResponse(pathInformation.getStations()))
+                .distance(path.getDistance())
+                .duration(path.getDuration())
+                .fare(fare)
+                .stations(createStationResponse(path.getStations()))
                 .build();
     }
 
@@ -43,32 +43,16 @@ public class PathsResponse {
         return stations;
     }
 
-    public void setStations(List<StationResponse> stations) {
-        this.stations = stations;
-    }
-
     public int getDistance() {
         return distance;
-    }
-
-    public void setDistance(int distance) {
-        this.distance = distance;
     }
 
     public int getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
     public long getFare() {
         return fare;
-    }
-
-    public void setFare(long fare) {
-        this.fare = fare;
     }
 
     public static Builder builder() {

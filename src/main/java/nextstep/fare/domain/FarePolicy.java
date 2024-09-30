@@ -1,6 +1,7 @@
 package nextstep.fare.domain;
 
 import nextstep.line.domain.Section;
+import nextstep.path.domain.Path;
 
 import java.util.Set;
 
@@ -33,9 +34,9 @@ public class FarePolicy {
         this.age = age;
     }
 
-    public static FarePolicy of(final Integer distance, final Set<Section> sections, final Integer age) {
-        validateDistance(distance);
-        return new FarePolicy(distance, sections, age);
+    public static FarePolicy of(final Path path, final Integer age) {
+        validateDistance(path.getDistance());
+        return new FarePolicy(path.getDistance(), path.getSections(), age);
     }
 
     public static Fare baseFare() {
