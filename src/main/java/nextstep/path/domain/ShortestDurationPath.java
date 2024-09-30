@@ -1,7 +1,6 @@
 package nextstep.path.domain;
 
 import nextstep.line.domain.Section;
-import nextstep.station.domain.Station;
 
 import java.util.List;
 
@@ -17,9 +16,9 @@ public class ShortestDurationPath extends ShortestPath {
     }
 
     @Override
-    public int getDistance(Station start, Station end) {
-        validateContains(start, end);
-        return calculateShortestPath(start, end)
+    protected int getDistance() {
+        validateContains();
+        return calculateShortestPath()
                 .getEdgeList()
                 .stream()
                 .mapToInt(edge -> getSectionByEdge(edge).getDistance())
@@ -27,8 +26,8 @@ public class ShortestDurationPath extends ShortestPath {
     }
 
     @Override
-    public int getDuration(Station start, Station end) {
-        validateContains(start, end);
-        return (int) calculateShortestPath(start, end).getWeight();
+    protected int getDuration() {
+        validateContains();
+        return (int) calculateShortestPath().getWeight();
     }
 }
