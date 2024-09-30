@@ -1,8 +1,6 @@
 package nextstep.path.unit;
 
-import nextstep.path.domain.Path;
-import nextstep.path.domain.PathPoint;
-import nextstep.path.domain.ShortestDistancePath;
+import nextstep.path.domain.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +17,7 @@ public class ShortestDurationPathTest {
     @Test
     void findTest() {
         // given
-        ShortestDistancePath 연결된경로 = new ShortestDistancePath(연결된구간, PathPoint.of(강남역, 교대역));
+        ShortestDurationPath 연결된경로 = new ShortestDurationPath(연결된구간, PathPoint.of(강남역, 교대역));
         Path expected = Path.builder()
                 .distance(DISTANCE_6 + DISTANCE_7)
                 .duration(DURATION_2 + DEFAULT_DURATION)

@@ -59,4 +59,18 @@ public class ShortestPathTest {
         // then
         assertThatThrownBy(actual).isInstanceOf(NotConnectedPathsException.class);
     }
+
+    @DisplayName("경로 검사 함수는, 경로 지점이 연결된 경로가 없는 경우 예외를 반환한다.")
+    @ParameterizedTest
+    @EnumSource
+    void validateConnectedTest(PathType pathType) {
+        // given
+        ShortestPath 연결안된경로 = pathType.createShortestPath(List.of(강남역_양재역, 교대역_홍대역), PathPoint.of(강남역, 교대역));
+
+        // when
+        ThrowableAssert.ThrowingCallable actual = () -> 연결안된경로.validateConnected();
+
+        // then
+        assertThatThrownBy(actual).isInstanceOf(NotConnectedPathsException.class);
+    }
 }

@@ -6,6 +6,7 @@ import nextstep.station.application.dto.StationResponse;
 import nextstep.station.domain.Station;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PathsResponse {
@@ -88,5 +89,22 @@ public class PathsResponse {
         public PathsResponse build() {
             return new PathsResponse(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PathsResponse that = (PathsResponse) o;
+        return distance == that.distance && duration == that.duration && fare == that.fare && Objects.equals(stations, that.stations);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(distance, duration, fare, stations);
     }
 }

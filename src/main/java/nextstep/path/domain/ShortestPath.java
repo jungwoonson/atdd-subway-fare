@@ -99,9 +99,7 @@ public abstract class ShortestPath {
     }
 
     public void validateConnected() {
-        if (calculateShortestPath() == null) {
-            throw new NotConnectedPathsException();
-        }
+        calculateShortestPath();
     }
 
     protected void validateContains() {

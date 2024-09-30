@@ -58,6 +58,7 @@ public class UnitTestFixture {
             .build();
 
     public static final List<Section> 연결된구간 = List.of(강남역_양재역, 양재역_교대역, 교대역_홍대역, 홍대역_강남역);
+    public static final List<Section> 연결안된구간 = List.of(강남역_양재역, 교대역_홍대역);
 
     public static Line 신분당선(Station upStation, Station downStation) {
         return Line.builder()

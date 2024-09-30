@@ -1,6 +1,7 @@
 package nextstep.path.application;
 
-import nextstep.fare.domain.FarePolicy;
+import nextstep.fare.application.FareService;
+import nextstep.fare.application.dto.CalculateFareRequest;
 import nextstep.line.domain.SectionRepository;
 import nextstep.path.application.dto.PathsRequest;
 import nextstep.path.application.dto.PathsResponse;
@@ -23,16 +24,17 @@ import static nextstep.path.domain.PathType.DISTANCE;
 public class PathService {
 
     private SectionRepository sectionRepository;
+    private FareService fareService;
 
-    public PathService(SectionRepository sectionRepository) {
+    public PathService(SectionRepository sectionRepository, FareService fareService) {
         this.sectionRepository = sectionRepository;
+        this.fareService = fareService;
     }
 
     public PathsResponse findShortestPaths(PathsRequest pathsRequest) {
         ShortestPath shortestPath = createShortestPath(pathsRequest);
         Path path = shortestPath.find();
-        FarePolicy farePolicy = FarePolicy.of(path, pathsRequest.getAge());
-        return PathsResponse.of(path, farePolicy.calculateFare());
+        return PathsResponse.of(path, fareService.calculateFare(new CalculateFareRequest(path, pathsRequest.getAge())));
     }
 
     public void validatePaths(Long source, Long target) {
