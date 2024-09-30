@@ -43,14 +43,6 @@ public class Fare implements Comparable<Fare> {
         return Fare.from(this.fare + fare.fare);
     }
 
-    // TODO: 지워야함
-    public Fare addMostExpensiveFare(final List<Fare> fares) {
-        Fare mostExpensive = fares.stream()
-                .max(Fare::compareTo)
-                .orElse(zero());
-        return Fare.from(this.fare + mostExpensive.getFare());
-    }
-
     public Fare minus(Fare minusFare) {
         return Fare.from(this.fare - minusFare.fare);
     }
