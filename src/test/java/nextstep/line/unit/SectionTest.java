@@ -94,7 +94,8 @@ public class SectionTest {
 
     @Test
     @DisplayName("구간 분리 함시 실행 중, 새로운 구간의 소요시간이 기존 구간의 소요시간보다 크거나 같으면 예외를 발생시킨다.")
-    void GraterOrEqualExistingDurationExceptionTest() {// given
+    void GraterOrEqualExistingDurationExceptionTest() {
+        // given
         Section 강남역_양재역 = Section.builder()
                 .line(신분당선)
                 .upStation(강남역)

@@ -23,7 +23,6 @@ public class FareService {
         sectionFarePolicy.setNextHandler(ageDiscountFarePolicy);
     }
 
-    // 요금 계산 메서드
     public Fare calculateFare(CalculateFareRequest request) {
         return distanceFarePolicy.calculateFare(Fare.zero(), request);
     }
