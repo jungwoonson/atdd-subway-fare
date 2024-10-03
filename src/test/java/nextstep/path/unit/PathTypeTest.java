@@ -35,8 +35,12 @@ public class PathTypeTest {
     @ParameterizedTest
     @MethodSource("provideTypesArguments")
     void createShortestPathTest(PathType pathType, Class<?> expected) {
+        // given
+        Long source = 1L;
+        Long target = 2L;
+
         // when
-        ShortestPath actual = pathType.createShortestPath(new ArrayList<>());
+        ShortestPath actual = pathType.createShortestPath(new ArrayList<>(), PathPoint.of(source, target));
 
         // then
         assertThat(actual).isInstanceOf(expected);

@@ -1,15 +1,15 @@
 package nextstep.path.unit;
 
+import nextstep.fare.application.FareService;
+import nextstep.fare.domain.Fare;
 import nextstep.line.domain.Section;
 import nextstep.line.domain.SectionRepository;
 import nextstep.path.application.PathService;
+import nextstep.path.application.dto.PathsRequest;
 import nextstep.path.application.dto.PathsResponse;
-import nextstep.path.application.exception.NotAddedEndToPathsException;
-import nextstep.path.application.exception.NotAddedStartToPathsException;
 import nextstep.path.application.exception.NotAddedStationsToPathsException;
 import nextstep.path.application.exception.NotConnectedPathsException;
 import nextstep.path.ui.exception.SameSourceAndTargetException;
-import nextstep.station.application.StationService;
 import nextstep.station.domain.Station;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +29,7 @@ import static nextstep.path.domain.PathType.DISTANCE;
 import static nextstep.utils.UnitTestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Mock을 활용한 지하철 경로 서비스 테스트")
@@ -40,87 +41,44 @@ public class PathServiceMockTest {
 
     @Mock
     private SectionRepository sectionRepository;
+
+    @Mock
+    private FareService fareService;
+
     private PathService pathService;
 
     @BeforeEach
     void setUp() {
-        pathService = new PathService(sectionRepository);
+        pathService = new PathService(sectionRepository, fareService);
     }
 
     @DisplayName("최단경로 조회 함수는, 출발역과 도착역을 입력하면 최단 경로 지하철 역 목록과 총 거리를 반환한다.")
     @Test
     void findShortestPathsTest() {
         // given
-        when(sectionRepository.findAll()).thenReturn(연결된구간);
-
-        // when
-        PathsResponse pathsResponse = pathService.findShortestPaths(강남역.getId(), 교대역.getId(), DISTANCE.name());
-
-        // then
-        assertThat(pathsResponse.getStations()).isEqualTo(createStationResponse(강남역, 홍대역, 교대역));
-        assertThat(pathsResponse.getDistance()).isEqualTo(13);
-    }
-
-    @DisplayName("최단경로 조회 함수는, 구간에 등록되지 않은 역이 출발역인 경우 예외를 발생한다.")
-    @Test
-    void findShortestPathsNotAddedStartToSectionExceptionTest() {
-        // given
-        Station 구간에없는역 = Station.of(구간에없는역_ID, 구간에없는역_NAME);
+        Fare fare = Fare.zero();
 
         when(sectionRepository.findAll()).thenReturn(연결된구간);
+        when(fareService.calculateFare(any())).thenReturn(fare);
+
+        PathsRequest request = PathsRequest.builder()
+                .source(강남역.getId())
+                .target(교대역.getId())
+                .type(DISTANCE.name())
+                .age(0)
+                .build();
+
+        PathsResponse expected = PathsResponse.builder()
+                .distance(DISTANCE_6 + DISTANCE_7)
+                .duration(DEFAULT_DURATION + DURATION_2)
+                .fare(fare)
+                .stations(createStationResponse(강남역, 홍대역, 교대역))
+                .build();
 
         // when
-        ThrowingCallable actual = () -> pathService.findShortestPaths(구간에없는역.getId(), 교대역.getId(), DISTANCE.name());
+        PathsResponse actual = pathService.findShortestPaths(request);
 
         // then
-        assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class);
-    }
-
-    @DisplayName("최단경로 조회 함수는, 구간에 등록되지 않은 역이 도착역인 경우 예외를 발생한다.")
-    @Test
-    void findShortestPathsNotAddedEndToSectionExceptionTest() {
-        // given
-        Station 구간에없는역 = Station.of(구간에없는역_ID, 구간에없는역_NAME);
-
-        when(sectionRepository.findAll()).thenReturn(연결된구간);
-
-        // when
-        ThrowingCallable actual = () -> pathService.findShortestPaths(강남역.getId(), 구간에없는역.getId(), DISTANCE.name());
-
-        // then
-        assertThatThrownBy(actual).isInstanceOf(NotAddedStationsToPathsException.class);
-    }
-
-    @DisplayName("경로검사 합수는, 주어진 출발역과 도착역이 정상적인 경로를 생성할 수 없으면 예외를 발생시킨다.")
-    @Test
-    void validateSameSourceAndTargetTest() {
-        // when
-        ThrowingCallable actual = () -> pathService.validatePaths(강남역.getId(), 강남역.getId());
-
-        // then
-        assertThatThrownBy(actual).isInstanceOf(SameSourceAndTargetException.class);
-    }
-
-    @DisplayName("경로검사 합수는, 주어진 출발역과 도착역이 정상적인 경로를 생성할 수 없으면 예외를 발생시킨다.")
-    @ParameterizedTest
-    @MethodSource("validatePathsParams")
-    void validatePathsTest(Station source, Station target, Class<? extends RuntimeException> expected) {
-        // given
-        List<Section> 연결_안된_구간 = List.of(강남역_양재역, 교대역_홍대역);
-
-        when(sectionRepository.findAll()).thenReturn(연결_안된_구간);
-
-        // when
-        ThrowingCallable actual = () -> pathService.validatePaths(target.getId(), source.getId());
-
-        // then
-        assertThatThrownBy(actual).isInstanceOf(expected);
-    }
-
-    private static Stream<Arguments> validatePathsParams() {
-        return Stream.of(
-                Arguments.of(강남역, Station.of(0L, "없는역"), NotAddedStationsToPathsException.class),
-                Arguments.of(강남역, 교대역, NotConnectedPathsException.class)
-        );
+        assertThat(actual).isEqualTo(expected);
     }
 }

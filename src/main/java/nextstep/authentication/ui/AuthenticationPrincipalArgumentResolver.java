@@ -31,12 +31,23 @@ public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArg
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+
+        AuthenticationPrincipal annotation = parameter.getParameterAnnotation(AuthenticationPrincipal.class);
         String token = getToken(webRequest);
+
+        if (token == null && !annotation.loginRequired()) {
+            return LoginMember.ANONYMOUS;
+        }
+
+        if (token == null) {
+            throw new AuthenticationException();
+        }
 
         try {
             String email = jwtTokenProvider.getPrincipal(token);
             Long id = jwtTokenProvider.getId(token);
-            return new LoginMember(email, id);
+            Integer age = jwtTokenProvider.getAge(token);
+            return new LoginMember(email, id, age);
         } catch (JwtException e) {
             throw new AuthenticationException();
         }
@@ -45,7 +56,7 @@ public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArg
     private String getToken(NativeWebRequest webRequest) {
         String authorization = webRequest.getHeader(AUTHORIZATION);
         if (isUnauthorized(authorization)) {
-            throw new AuthenticationException();
+            return null;
         }
 
         return authorization.split(SPACE)[TOKEN_INDEX];

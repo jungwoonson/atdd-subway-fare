@@ -60,7 +60,7 @@ public class TokenServiceTest {
         // given
         when(githubClient.requestGithubToken(any())).thenReturn(사용자1.getAccessToken());
         when(githubClient.requestGithubProfile(any())).thenReturn(new GithubProfileResponse(사용자1.getEmail(), 사용자1.getAge()));
-        when(authenticationService.lookUpOrCreateMember(any())).thenReturn(new LoginMember(사용자1.getEmail(), 사용자1.getId()));
+        when(authenticationService.lookUpOrCreateMember(any())).thenReturn(new LoginMember(사용자1.getEmail(), 사용자1.getId(), 사용자1.getAge()));
         when(jwtTokenProvider.createToken(사용자1.getEmail(), 사용자1.getId())).thenReturn(사용자1.getAccessToken());
 
         // when

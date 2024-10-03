@@ -103,6 +103,7 @@ public class LineAcceptanceTest {
         // then
         assertResponseCode(response, HttpStatus.OK);
         assertThat(getName(response)).isEqualTo(신분당선);
+        assertThat(getFare(response)).isEqualTo(DEFAULT_FARE);
     }
 
     /**
@@ -124,6 +125,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> lookedUpLine = lookUpLine(getId(createdLineResponse));
         assertThat(getName(lookedUpLine)).isEqualTo(분당선);
         assertThat(lookedUpLine.jsonPath().getString("color")).isEqualTo(GREEN);
+        assertThat(getFare(lookedUpLine)).isEqualTo(DEFAULT_FARE);
     }
 
     /**

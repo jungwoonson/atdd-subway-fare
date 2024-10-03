@@ -12,46 +12,57 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class ShortestPath {
 
+    private GraphPath<Station, DefaultWeightedEdge> path;
+
+    protected PathPoint pathPoint;
     protected List<Section> sections;
     protected WeightedMultigraph<Station, DefaultWeightedEdge> graph;
 
-    public ShortestPath(List<Section> sections) {
+    protected ShortestPath(List<Section> sections, PathPoint pathPoint) {
         this.sections = sections;
         this.graph = createGraph(sections);
+        this.pathPoint = pathPoint;
     }
 
-    public List<Station> getStations(Station start, Station end) {
-        validateContains(start, end);
-        return findShortestPath(start, end).getVertexList();
+    protected WeightedMultigraph<Station, DefaultWeightedEdge> createGraph(List<Section> sections) {
+        WeightedMultigraph<Station, DefaultWeightedEdge> graph = new WeightedMultigraph<>(DefaultWeightedEdge.class);
+        sections.forEach(section -> {
+            graph.addVertex(section.getUpStation());
+            graph.addVertex(section.getDownStation());
+            DefaultWeightedEdge edge = graph.addEdge(section.getUpStation(), section.getDownStation());
+            graph.setEdgeWeight(edge, getWeight(section));
+        });
+        return graph;
     }
 
-    protected void validateConnected(GraphPath<Station, DefaultWeightedEdge> path) {
-        if (path == null) {
-            throw new NotConnectedPathsException();
+    public Path find() {
+        int distance = getDistance();
+        return Path.builder()
+                .distance(distance)
+                .duration(getDuration())
+                .stations(getStations())
+                .sections(getUsedSections())
+                .build();
+    }
+
+    private List<Station> getStations() {
+        validateContains();
+        return calculateShortestPath().getVertexList();
+    }
+
+    protected GraphPath<Station, DefaultWeightedEdge> calculateShortestPath() {
+        if (this.path != null) {
+            return this.path;
         }
-    }
-
-    public void validateConnected(Station start, Station end) {
-        if (findShortestPath(start, end) == null) {
-            throw new NotConnectedPathsException();
-        }
-    }
-
-    public void validateContains(Station start, Station end) {
-        if (!graph.containsVertex(start)) {
-            throw new NotAddedStartToPathsException(start.getName());
-        }
-        if (!graph.containsVertex(end)) {
-            throw new NotAddedEndToPathsException(end.getName());
-        }
-    }
-
-    protected GraphPath<Station, DefaultWeightedEdge> findShortestPath(Station start, Station end) {
         DijkstraShortestPath<Station, DefaultWeightedEdge> dijkstraShortestPath = new DijkstraShortestPath<>(graph);
-        GraphPath<Station, DefaultWeightedEdge> path = dijkstraShortestPath.getPath(start, end);
+        Station source = lookUpStation(pathPoint.getSourceId());
+        Station target = lookUpStation(pathPoint.getTargetId());
+        GraphPath<Station, DefaultWeightedEdge> path = dijkstraShortestPath.getPath(source, target);
         validateConnected(path);
         return path;
     }
@@ -66,16 +77,45 @@ public abstract class ShortestPath {
                 .orElseThrow(() -> new IllegalArgumentException("엣지에 해당하는 구간을 찾을 수 없습니다."));
     }
 
-    protected abstract WeightedMultigraph<Station, DefaultWeightedEdge> createGraph(List<Section> sections);
-
-    public abstract int getDistance(Station start, Station end);
-
-    public abstract int getDuration(Station start, Station end);
-
-    public Station lookUpStation(Long station_id) {
+    private Station lookUpStation(Long stationId) {
         return graph.vertexSet().stream()
-                .filter(station -> station_id.equals(station.getId()))
+                .filter(station -> stationId.equals(station.getId()))
                 .findFirst()
-                .orElseThrow(() -> new NotAddedStationsToPathsException("station_id " + station_id));
+                .orElseThrow(() -> new NotAddedStationsToPathsException("stationId " + stationId));
     }
+
+    private Set<Section> getUsedSections() {
+        return calculateShortestPath()
+                .getEdgeList()
+                .stream()
+                .map(this::getSectionByEdge)
+                .collect(Collectors.toSet());
+    }
+
+    private void validateConnected(GraphPath<Station, DefaultWeightedEdge> path) {
+        if (path == null) {
+            throw new NotConnectedPathsException();
+        }
+    }
+
+    public void validateConnected() {
+        calculateShortestPath();
+    }
+
+    protected void validateContains() {
+        Station start = lookUpStation(pathPoint.getSourceId());
+        if (!graph.containsVertex(start)) {
+            throw new NotAddedStartToPathsException(start.getName());
+        }
+        Station end = lookUpStation(pathPoint.getTargetId());
+        if (!graph.containsVertex(end)) {
+            throw new NotAddedEndToPathsException(end.getName());
+        }
+    }
+
+    protected abstract int getWeight(Section section);
+
+    protected abstract int getDistance();
+
+    protected abstract int getDuration();
 }

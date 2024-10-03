@@ -7,8 +7,18 @@ import java.util.List;
 
 public enum PathType {
 
-    DISTANCE,
-    DURATION;
+    DISTANCE{
+        @Override
+        public ShortestPath createShortestPath(List<Section> sections, PathPoint pathPoint) {
+            return new ShortestDistancePath(sections, pathPoint);
+        }
+    },
+    DURATION{
+        @Override
+        public ShortestPath createShortestPath(List<Section> sections, PathPoint pathPoint) {
+            return new ShortestDurationPath(sections, pathPoint);
+        }
+    };
 
     public static PathType lookUp(String pathType) {
         try {
@@ -18,13 +28,5 @@ public enum PathType {
         }
     }
 
-    public ShortestPath createShortestPath(List<Section> sections) {
-        if (DISTANCE.equals(this)) {
-            return ShortestDistancePath.from(sections);
-        }
-        if (DURATION.equals(this)) {
-            return ShortestDurationPath.from(sections);
-        }
-        throw new IllegalArgumentException("지원하지 않는 타입입니다.");
-    }
+    public abstract ShortestPath createShortestPath(List<Section> sections, PathPoint pathPoint);
 }

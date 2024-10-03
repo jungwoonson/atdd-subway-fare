@@ -1,9 +1,13 @@
 package nextstep.path.application.dto;
 
 import nextstep.fare.domain.Fare;
+import nextstep.path.domain.Path;
 import nextstep.station.application.dto.StationResponse;
+import nextstep.station.domain.Station;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class PathsResponse {
     private int distance;
@@ -14,43 +18,42 @@ public class PathsResponse {
     public PathsResponse() {
     }
 
-    private PathsResponse(int distance, int duration, long fare, List<StationResponse> stations) {
-        this.distance = distance;
-        this.duration = duration;
-        this.fare = fare;
-        this.stations = stations;
+    private PathsResponse(Builder builder) {
+        this.distance = builder.distance;
+        this.duration = builder.duration;
+        this.fare = builder.fare;
+        this.stations = builder.stations;
+    }
+
+    public static PathsResponse of(Path path, Fare fare) {
+        return PathsResponse.builder()
+                .distance(path.getDistance())
+                .duration(path.getDuration())
+                .fare(fare)
+                .stations(createStationResponse(path.getStations()))
+                .build();
+    }
+
+    private static List<StationResponse> createStationResponse(List<Station> stations) {
+        return stations.stream()
+                .map(StationResponse::from)
+                .collect(Collectors.toList());
     }
 
     public List<StationResponse> getStations() {
         return stations;
     }
 
-    public void setStations(List<StationResponse> stations) {
-        this.stations = stations;
-    }
-
     public int getDistance() {
         return distance;
-    }
-
-    public void setDistance(int distance) {
-        this.distance = distance;
     }
 
     public int getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
     public long getFare() {
         return fare;
-    }
-
-    public void setFare(long fare) {
-        this.fare = fare;
     }
 
     public static Builder builder() {
@@ -84,7 +87,24 @@ public class PathsResponse {
         }
 
         public PathsResponse build() {
-            return new PathsResponse(distance, duration, fare, stations);
+            return new PathsResponse(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PathsResponse that = (PathsResponse) o;
+        return distance == that.distance && duration == that.duration && fare == that.fare && Objects.equals(stations, that.stations);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(distance, duration, fare, stations);
     }
 }

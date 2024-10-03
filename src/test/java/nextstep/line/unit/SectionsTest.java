@@ -1,15 +1,18 @@
 package nextstep.line.unit;
 
+import nextstep.fare.domain.Fare;
 import nextstep.line.application.exception.DuplicateStationException;
 import nextstep.line.domain.Section;
 import nextstep.line.domain.Sections;
 import nextstep.station.domain.Station;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static nextstep.utils.UnitTestFixture.*;

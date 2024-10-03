@@ -9,10 +9,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.OptionalInt;
+import java.util.*;
 import java.util.stream.IntStream;
 
 @Embeddable
@@ -30,6 +27,10 @@ public class Sections {
         sections = new ArrayList<>(List.of(section));
     }
 
+    private Sections(List<Section> sections) {
+        this.sections = sections;
+    }
+
     private Sections(Section startSection, Section secondSection) {
         startSection.changeToFirst();
         sections = new ArrayList<>(List.of(startSection, secondSection));
@@ -37,6 +38,18 @@ public class Sections {
 
     public static Sections from(Section section) {
         return new Sections(section);
+    }
+
+    public static Sections from(Set<Section> sections) {
+        return new Sections(new ArrayList<>(sections));
+    }
+
+    public static Sections from(List<Sections> sections) {
+        Set<Section> sectionSet = new HashSet<>();
+        for (Sections section : sections) {
+            sectionSet.addAll(section.sections);
+        }
+        return from(sectionSet);
     }
 
     public static Sections of(Section startSection, Section secondSection) {

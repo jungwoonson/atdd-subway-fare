@@ -1,63 +1,68 @@
 package nextstep.fare.domain;
 
+import javax.persistence.Column;
+import java.util.List;
 import java.util.Objects;
 
-public class Fare {
+public class Fare implements Comparable<Fare> {
 
-    private static final long BASE_FARE = 1250L;
-    private static final long ADDITIONAL_FARE = 100L;
+    public static final Long ZERO_FARE = 0L;
 
-    private static final int MINIMUM_DISTANCE = 1;
-    private static final int BASE_FARE_DISTANCE_LIMIT = 10;
-    private static final int EXTENDED_FARE_DISTANCE_LIMIT = 50;
-    private static final int ADDITIONAL_FARE_INTERVAL = 5;
-    private static final int REDUCED_ADDITIONAL_FARE_INTERVAL = 8;
-    private static final int FARE_ADJUSTMENT = 1;
+    @Column(nullable = false)
+    private Long fare;
 
-    private final long fare;
+    public Fare() {
+    }
 
-    public Fare(final long fare) {
+    private Fare(final Long fare) {
         this.fare = fare;
     }
 
-    public static Fare from(final int distance) {
-        validateDistance(distance);
-        return new Fare(calculateFare(distance));
+    public static Fare zero() {
+        return new Fare(ZERO_FARE);
     }
 
-    private static void validateDistance(final int distance) {
-        if (distance < MINIMUM_DISTANCE) {
-            throw new LessThanMinimumDistanceException(MINIMUM_DISTANCE, distance);
+    public static Fare from(final Integer fare) {
+        Long fareLong = fare.longValue();
+        validateFare(fareLong);
+        return new Fare(fareLong);
+    }
+
+    public static Fare from(final Long fare) {
+        validateFare(fare);
+        return new Fare(fare);
+    }
+
+    private static void validateFare(final Long fare) {
+        if (fare < ZERO_FARE) {
+            throw new LessThanZeroFareException(fare);
         }
     }
 
-    private static long calculateFare(final int distance) {
-        if (distance <= BASE_FARE_DISTANCE_LIMIT) {
-            return BASE_FARE;
-        }
-        if (distance <= EXTENDED_FARE_DISTANCE_LIMIT) {
-            return calculateAdditionalFareForExtendedDistance(distance);
-        }
-        return calculateAdditionalFareForLongDistance(distance);
+    public Fare add(final Fare fare) {
+        return Fare.from(this.fare + fare.fare);
     }
 
-    private static long calculateAdditionalFareForExtendedDistance(final int distance) {
-        int additionalDistance = Math.min(distance, EXTENDED_FARE_DISTANCE_LIMIT) - BASE_FARE_DISTANCE_LIMIT - FARE_ADJUSTMENT;
-        return BASE_FARE + calculateAdditionalFare(additionalDistance, ADDITIONAL_FARE_INTERVAL);
+    public Fare minus(Fare minusFare) {
+        return Fare.from(this.fare - minusFare.fare);
     }
 
-    private static long calculateAdditionalFareForLongDistance(final int distance) {
-        int additionalDistance = distance - EXTENDED_FARE_DISTANCE_LIMIT - FARE_ADJUSTMENT;
-        return calculateAdditionalFareForExtendedDistance(distance)
-                + calculateAdditionalFare(additionalDistance, REDUCED_ADDITIONAL_FARE_INTERVAL);
+    public Fare multiply(int number) {
+        return Fare.from(this.fare * number);
     }
 
-    private static long calculateAdditionalFare(final int additionalDistance, final int fareInterval) {
-        return ADDITIONAL_FARE + (additionalDistance / fareInterval) * ADDITIONAL_FARE;
+    public Fare multiply(Double number) {
+        Double multiplied = this.fare * number;
+        return Fare.from(multiplied.longValue());
     }
 
-    public long getFare() {
+    public Long getFare() {
         return fare;
+    }
+
+    @Override
+    public int compareTo(Fare o) {
+        return fare.compareTo(o.fare);
     }
 
     @Override
@@ -75,5 +80,12 @@ public class Fare {
     @Override
     public int hashCode() {
         return Objects.hash(fare);
+    }
+
+    @Override
+    public String toString() {
+        return "Fare{" +
+                "fare=" + fare +
+                '}';
     }
 }
